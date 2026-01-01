@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Account Approvals</title>
+    <style>
+      body {
+        background: #0e0e0e;
+        color: white;
+        font-family: Arial;
+        padding: 40px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 10px;
+        border-bottom: 1px solid #333;
+      }
+
+      select,
+      button {
+        background: #1c1c1c;
+        color: white;
+        border: none;
+        padding: 6px;
+      }
+
+      button {
+        background: #4caf50;
+        color: black;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h2>Pending Account Approvals</h2>
+
+    <table>
+      <tr>
+        <th>User</th>
+        <th>Role</th>
+        <th>Flights</th>
+        <th>Action</th>
+      </tr>
+
+      {% for p in profiles %}
+      <tr>
+        <form method="post">
+          {% csrf_token %}
+          <td>{{ p.user.username }}</td>
+
+          <td>
+            <select name="role">
+              <option value="STUDENT">Student</option>
+              <option value="INSTRUCTOR">Instructor</option>
+              <option value="MANAGEMENT">Management</option>
+              {% if request.user.profile.role == "ADMIN" %}
+              <option value="ADMIN">Admin</option>
+              {% endif %}
+            </select>
+          </td>
+
+          <td>
+            <input type="checkbox" name="can_access_flights" />
+          </td>
+
+          <td>
+            <input type="hidden" name="profile_id" value="{{ p.id }}" />
+            <button type="submit">Approve</button>
+          </td>
+        </form>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="4">No pending accounts</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </body>
+</html>

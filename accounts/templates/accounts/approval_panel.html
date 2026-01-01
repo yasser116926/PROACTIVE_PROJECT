@@ -1,0 +1,29 @@
+<h2>Pending Accounts</h2>
+
+{% for user in users %}
+<form method="post">
+  {% csrf_token %}
+  <input type="hidden" name="user_id" value="{{ user.id }}" />
+
+  <strong>{{ user.username }}</strong>
+  ({{ user.role }}) {% if request.user.role == "admin" %}
+  <select name="role">
+    <option value="student">Student</option>
+    <option value="instructor">Instructor</option>
+    <option value="management">Management</option>
+  </select>
+  {% endif %}
+
+  <button type="submit">Approve</button>
+</form>
+<hr />
+{% endfor %}
+<p>
+  <a href="{% url 'accounts:approve_students' %}">Go to Student Approvals</a>
+</p>
+<p>
+  <a href="{% url 'flights:flights' %}">Go to Flights Dashboard</a>
+</p>
+<p>
+  <a href="{% url 'accounts:login' %}">Log in</a>
+</p>

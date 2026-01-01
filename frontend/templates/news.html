@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Proactive Air Service - News</title>
+
+    <!-- Main global styles -->
+    <link rel="stylesheet" href="../assets/style.css" />
+
+    <!-- Page-specific styles -->
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f4f6f8;
+        color: #222;
+      }
+
+      /* Page title */
+      .page-header {
+        background: #0f172a;
+        color: white;
+        padding: 40px 20px;
+        text-align: center;
+      }
+
+      .page-header h1 {
+        margin: 0;
+        font-size: 36px;
+        letter-spacing: 1px;
+      }
+
+      /* News container */
+      #news-container {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 0 20px;
+      }
+
+      /* Individual news card */
+      .news-card {
+        background: white;
+        border-radius: 14px;
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        transition: 0.25s;
+      }
+
+      .news-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+      }
+
+      .news-card h3 {
+        margin-top: 0;
+        margin-bottom: 12px;
+        font-size: 22px;
+        color: #0f172a;
+      }
+
+      .news-card p {
+        margin: 0;
+        line-height: 1.7;
+        color: #444;
+      }
+
+      /* Loading / empty states */
+      .status-text {
+        text-align: center;
+        font-size: 18px;
+        color: #666;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1>Latest News</h1>
+    </div>
+
+    <!-- News Content -->
+    <div id="news-container">
+      <p class="status-text">Loading news...</p>
+    </div>
+
+    <script>
+      async function displayNews() {
+        const apiUrl = "http://127.0.0.1:8000/api/news/";
+        const container = document.getElementById("news-container");
+
+        try {
+          const response = await fetch(apiUrl);
+
+          if (!response.ok) {
+            throw new Error("Failed to fetch news");
+          }
+
+          const data = await response.json();
+          container.innerHTML = "";
+
+          if (!data.length) {
+            container.innerHTML =
+              "<p class='status-text'>No news available.</p>";
+            return;
+          }
+
+          data.forEach((item) => {
+            const div = document.createElement("div");
+            div.className = "news-card";
+
+            div.innerHTML = `
+              <h3>${item.title}</h3>
+              <p>${item.content}</p>
+            `;
+
+            container.appendChild(div);
+          });
+        } catch (error) {
+          console.error(error);
+          container.innerHTML =
+            "<p class='status-text'>Error loading news.</p>";
+        }
+      }
+
+      displayNews();
+    </script>
+  </body>
+</html>

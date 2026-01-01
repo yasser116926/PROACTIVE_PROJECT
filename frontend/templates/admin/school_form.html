@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Add School Info</title>
+    <link rel="stylesheet" href="../assets/style.css" />
+  </head>
+  <body>
+    <h1>Add School Information</h1>
+
+    <form method="post">
+      {% csrf_token %} {{ form.as_p }}
+      <button type="submit">Submit</button>
+    </form>
+
+    <a href="/school/">Back to School List</a>
+  </body>
+</html>

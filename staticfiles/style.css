@@ -1,0 +1,188 @@
+/* ==========================
+   General Page Styles
+========================== */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f4f8;
+  color: #333;
+  margin: 0;
+  padding: 20px;
+}
+
+h1 {
+  color: #007bff; /* school blue */
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* ==========================
+   Links
+========================== */
+a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #ffd700; /* yellow hover */
+}
+
+/* ==========================
+   Buttons
+========================== */
+button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #ffd700;
+  color: #007bff;
+}
+
+/* ==========================
+   Containers / Cards
+========================== */
+div {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+/* ==========================
+   Section Specific Containers
+========================== */
+#flight-container,
+#notam-container,
+#school-container,
+#admission-container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #f0f8ff; /* light blue */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Individual card styles */
+#flight-container div,
+#notam-container div,
+#school-container .info-section,
+#admission-form {
+  border: 1px solid #ffd700; /* yellow border */
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 6px;
+  background-color: #ffffff;
+}
+
+/* ==========================
+   Info Section Headings
+========================== */
+.info-section h2 {
+  color: #ffd700; /* yellow */
+  margin-bottom: 6px;
+}
+
+/* ==========================
+   Admission Form
+========================== */
+#admission-form {
+  max-width: 500px;
+  margin: 20px auto;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+#admission-form input,
+#admission-form select,
+#admission-form textarea {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  border: 1px solid #007bff;
+}
+
+/* Admission button hover handled above */
+
+/* ==========================
+   Events Section
+========================== */
+#events-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.event-card {
+  flex: 1 1 calc(33% - 30px);
+  box-sizing: border-box;
+}
+
+.event-card h2 {
+  font-size: 1.2em;
+  margin-bottom: 10px;
+}
+
+.event-card p {
+  font-size: 1em;
+  line-height: 1.4;
+}
+
+/* ==========================
+   Gallery Section
+========================== */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.gallery-grid img {
+  width: 100%;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.preview {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  justify-content: center;
+  align-items: center;
+}
+
+.preview img {
+  max-width: 90%;
+  max-height: 90%;
+}
+
+/* ==========================
+   Result / Error Messages
+========================== */
+#result,
+#error-msg {
+  text-align: center;
+  color: red;
+  margin-top: 10px;
+}
+
+/* ==========================
+   Small Text
+========================== */
+small {
+  color: #555;
+  font-size: 0.85rem;
+}

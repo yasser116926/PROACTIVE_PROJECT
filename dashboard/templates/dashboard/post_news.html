@@ -1,0 +1,9 @@
+<!-- dashboard/templates/dashboard/post_news.html -->
+<h2>Post News</h2>
+<form method="post">
+  {% csrf_token %} {{ form.as_p }}
+  <button type="submit">Post</button>
+</form>
+{% for message in messages %}
+<p>{{ message }}</p>
+{% endfor %}

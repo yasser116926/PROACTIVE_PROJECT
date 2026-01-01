@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Proactive VCR - Instructor</title>
+
+    <style>
+      body {
+        margin: 0;
+        background: #0b0b0b;
+        color: #fff;
+        font-family: Arial, sans-serif;
+      }
+
+      .vcr-header {
+        height: 60px;
+        background: #111;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        border-bottom: 1px solid #222;
+      }
+
+      .vcr-title {
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+      .vcr-container {
+        display: flex;
+        height: calc(100vh - 60px);
+      }
+
+      .vcr-board {
+        flex: 1;
+        background: #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #555;
+        font-size: 18px;
+      }
+
+      .vcr-toolbar {
+        width: 70px;
+        background: #111;
+        border-left: 1px solid #222;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 15px;
+        gap: 14px;
+      }
+
+      .tool {
+        width: 42px;
+        height: 42px;
+        background: #1c1c1c;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 18px;
+      }
+
+      .tool:hover {
+        background: #333;
+      }
+
+      .status {
+        display: flex;
+        gap: 4px;
+      }
+
+      .signal {
+        width: 4px;
+        background: #444;
+      }
+
+      .signal.active {
+        background: #4caf50;
+      }
+
+      .signal:nth-child(1) {
+        height: 6px;
+      }
+      .signal:nth-child(2) {
+        height: 10px;
+      }
+      .signal:nth-child(3) {
+        height: 14px;
+      }
+      .signal:nth-child(4) {
+        height: 18px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- HEADER -->
+    <div class="vcr-header">
+      <div class="vcr-title">Proactive VCR — Instructor</div>
+
+      <div style="display: flex; align-items: center; gap: 15px">
+        <!-- Connected Students -->
+        <select
+          style="background: #1c1c1c; color: #fff; border: none; padding: 6px"
+        >
+          <option>Connected Students</option>
+          <option>Student 1</option>
+          <option>Student 2</option>
+        </select>
+
+        <!-- Connection Status -->
+        <div class="status">
+          <div class="signal active"></div>
+          <div class="signal active"></div>
+          <div class="signal active"></div>
+          <div class="signal"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="vcr-container">
+      <div class="vcr-board">Instructor Board (Live)</div>
+
+      <div class="vcr-toolbar">
+        <div class="tool" title="Pen">✏️</div>
+        <div class="tool" title="Upload">📂</div>
+        <div class="tool" title="Video">🎥</div>
+        <div class="tool" title="Mic">🎤</div>
+        <div class="tool" title="Mute Students">🔇</div>
+        <div class="tool" title="End Class">⛔</div>
+      </div>
+    </div>
+  </body>
+</html>

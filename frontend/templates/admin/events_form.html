@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Add Event</title>
+    <link rel="stylesheet" href="../assets/style.css" />
+  </head>
+  <body>
+    <h1>Add Event</h1>
+
+    <form id="events-form">
+      <label>Title:</label><br />
+      <input type="text" id="title" required /><br /><br />
+
+      <label>Description:</label><br />
+      <textarea id="description" rows="4" required></textarea><br /><br />
+
+      <label>Date:</label><br />
+      <input type="date" id="date" required /><br /><br />
+
+      <label>Time:</label><br />
+      <input type="time" id="time" required /><br /><br />
+
+      <label>Location:</label><br />
+      <input type="text" id="location" required /><br /><br />
+
+      <button type="submit">Add Event</button>
+    </form>
+
+    <p id="result"></p>
+
+    <script src="../assets/auth.js"></script>
+    <script>
+      const form = document.getElementById("events-form");
+      const result = document.getElementById("result");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        try {
+          if (!TOKEN) await login("admin", "yourpassword");
+
+          const response = await fetch("http://127.0.0.1:8000/api/events/", {
+            method: "POST",
+            headers: {
+              ...authHeaders(),
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              title: document.getElementById("title").value,
+              description: document.getElementById("description").value,
+              date: document.getElementById("date").value,
+              time: document.getElementById("time").value,
+              location: document.getElementById("location").value,
+            }),
+          });
+
+          if (response.ok) {
+            result.style.color = "green";
+            result.innerText = "Event added successfully!";
+            form.reset();
+          } else {
+            const err = await response.json();
+            result.style.color = "red";
+            result.innerText = JSON.stringify(err);
+          }
+        } catch (err) {
+          result.style.color = "red";
+          result.innerText = "Error adding event";
+          console.error(err);
+        }
+      });
+    </script>
+  </body>
+</html>

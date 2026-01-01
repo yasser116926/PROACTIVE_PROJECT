@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Proactive Staff Dashboard</title>
+
+    <style>
+      /* ===== Base ===== */
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: #f2f3f5;
+        color: #333;
+      }
+
+      /* ===== Top Bar ===== */
+      .top-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 90px;
+        background: linear-gradient(90deg, #0d47a1, #1976d2);
+        display: flex;
+        align-items: center;
+        padding: 0 50px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.15);
+        z-index: 1000;
+      }
+
+      .top-bar h1 {
+        color: #fff;
+        font-size: 28px;
+        margin: 0;
+        letter-spacing: 0.5px;
+      }
+
+      /* ===== Page Content ===== */
+      .page {
+        padding: 140px 60px 60px;
+        display: flex;
+        justify-content: center;
+      }
+
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 25px;
+        max-width: 1000px;
+        width: 100%;
+      }
+
+      /* ===== Buttons ===== */
+      .btn {
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 20px;
+        text-align: center;
+        text-decoration: none;
+        font-weight: 600;
+        color: #0d47a1;
+        border: 1px solid #dcdcdc;
+        transition: all 0.25s ease;
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+      }
+
+      .btn:hover {
+        transform: scale(1.06);
+        box-shadow: 0 0 22px rgba(255, 193, 7, 0.8);
+        border-color: #ffc107;
+        color: #000;
+      }
+
+      /* Staff-only approval highlight */
+      .btn.approve {
+        background: #1e1e1e;
+        color: white;
+      }
+
+      .btn.approve:hover {
+        box-shadow: 0 0 22px rgba(220, 53, 69, 0.9);
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <h1>Proactive Staff Dashboard</h1>
+    </div>
+
+    <!-- Content -->
+    <div class="page">
+      <div class="dashboard-grid">
+        <a class="btn" href="/dashboard/post-news/">➕ Post News</a>
+        <a class="btn" href="/dashboard/create-class/">➕ Create Class</a>
+        <a class="btn" href="/dashboard/create-event/">➕ Create Event</a>
+        <a class="btn" href="/dashboard/upload-library-resource/">
+          ➕ Upload Library Resource
+        </a>
+        <a class="btn" href="/dashboard/gallery/upload/">
+          ➕ Upload Gallery Image
+        </a>
+        <a class="btn" href="/dashboard/posts/add/">➕ Create Post</a>
+        <a class="btn" href="/dashboard/flights/">➕ Manage Flights</a>
+        <a class="btn" href="{% url 'instructor-vcr' %}"> ➕ Start VCR </a>
+
+        {% if request.user.is_staff %}
+        <a class="btn approve" href="{% url 'accounts:approve' %}">
+          ✅ Approve Accounts
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </body>
+</html>

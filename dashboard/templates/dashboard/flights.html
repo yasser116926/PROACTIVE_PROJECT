@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dashboard – Flights</title>
+  </head>
+  <body>
+    <h1>Flight Dashboard</h1>
+
+    <h3>Add Flight</h3>
+    {% if form %}
+    <form method="post">
+      {% csrf_token %} {{ form.as_p }}
+      <button type="submit">Add Flight</button>
+    </form>
+    {% else %}
+    <p>Flight form not available.</p>
+    {% endif %}
+
+    <hr />
+
+    <h3>Current Flights</h3>
+    {% if flights %}
+    <table border="1" cellpadding="6">
+      <tr>
+        <th>Aircraft</th>
+        <th>Time</th>
+        <th>Name</th>
+        <th>EX</th>
+      </tr>
+      {% for f in flights %}
+      <tr>
+        <td>{{ f.aircraft }}</td>
+        <td>{{ f.time }}</td>
+        <td>{{ f.name }}</td>
+        <td>{{ f.ex }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="4">No flights yet</td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% else %}
+    <p>No flight data available or database not ready.</p>
+    {% endif %}
+  </body>
+</html>

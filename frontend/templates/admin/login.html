@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Admin Login - Proactive Air Service</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f0f4f8;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .login-box {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        width: 320px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+      h2 {
+        text-align: center;
+        color: #0056b3;
+      }
+      input,
+      button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+      }
+      button {
+        background: #0056b3;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #ffd700;
+        color: #0056b3;
+      }
+      .error {
+        color: red;
+        text-align: center;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-box">
+      <h2>Admin Login</h2>
+
+      <input type="text" id="username" placeholder="Username" />
+      <input type="password" id="password" placeholder="Password" />
+      <button onclick="login()">Login</button>
+
+      <div class="error" id="error"></div>
+    </div>
+
+    <script>
+      async function login() {
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        const response = await fetch("http://127.0.0.1:8000/api/token/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        });
+
+        if (!response.ok) {
+          document.getElementById("error").innerText = "Invalid login";
+          return;
+        }
+
+        const data = await response.json();
+        localStorage.setItem("access", data.access);
+        localStorage.setItem("refresh", data.refresh);
+
+        window.location.href = "dashboard.html";
+      }
+    </script>
+  </body>
+</html>

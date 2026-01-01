@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Profile</title>
+    <style>
+      body {
+        background: #0e0e0e;
+        color: white;
+        font-family: Arial;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .profile-card {
+        text-align: center;
+      }
+
+      .avatar {
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        border: 5px solid;
+        overflow: hidden;
+        margin: auto;
+      }
+
+      .avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .ADMIN {
+        border-color: black;
+      }
+      .MANAGEMENT {
+        border-color: red;
+      }
+      .INSTRUCTOR {
+        border-color: blue;
+      }
+      .STUDENT {
+        border-color: yellow;
+      }
+
+      .name {
+        margin-top: 15px;
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+      .number {
+        font-size: 14px;
+        opacity: 0.8;
+        margin-top: 4px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="profile-card">
+      <div class="avatar {{ profile.role }}">
+        {% if profile.profile_image %}
+        <img src="{{ profile.profile_image.url }}" />
+        {% else %}
+        <img src="/static/default-avatar.png" />
+        {% endif %}
+      </div>
+
+      <div class="name">
+        {{ profile.user.get_full_name|default:profile.user.username }} - {{
+        profile.role|lower }}
+      </div>
+
+      {% if profile.role == "STUDENT" and profile.student_number %}
+      <div class="number">NO-{{ profile.student_number }}</div>
+      {% endif %}
+    </div>
+  </body>
+</html>

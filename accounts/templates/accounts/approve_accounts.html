@@ -1,0 +1,14 @@
+<h2>Pending Approvals</h2>
+
+{% for p in pending %}
+<form method="post">
+  {% csrf_token %}
+  <p>
+    {{ p.user.get_full_name }} - {{ p.role }}
+    <input type="hidden" name="profile_id" value="{{ p.id }}" />
+    <button type="submit">Approve</button>
+  </p>
+</form>
+{% empty %}
+<p>No pending approvals.</p>
+{% endfor %}

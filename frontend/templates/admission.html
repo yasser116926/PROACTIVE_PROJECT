@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Proactive Air Service - Admission</title>
+    <link rel="stylesheet" href="../assets/style.css" />
+    <style>
+      form {
+        max-width: 500px;
+        margin: 20px auto;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+      }
+      input,
+      select,
+      textarea {
+        width: 100%;
+        margin-bottom: 10px;
+        padding: 8px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+      }
+      button {
+        padding: 10px 15px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Join Proactive Air Service</h1>
+
+    <form id="admission-form">
+      <input type="text" id="full_name" placeholder="Full Name" required />
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="tel" id="phone" placeholder="Phone Number" required />
+      <select id="course" required>
+        <option value="">Select Course</option>
+        <option value="private_pilot">PPL</option>
+        <option value="commercial_pilot">CPL</option>
+        <option value="airline_transport_pilot_license">ATPL</option>
+        <option value="license_convertion">License Convertion</option>
+        <option value="instructer_rating">Instructer Rating</option>
+        <option value="multi_engine_IR">Multi Engine IR</option>
+        <option value="single_engine_IR">Single Engine IR</option>
+        <option value="full_motion_simulater">Full Motion Simulater</option>
+      </select>
+      <textarea id="notes" placeholder="Additional Notes"></textarea>
+      <button type="submit">Submit Application</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script src="../assets/auth.js"></script>
+    <script>
+      const form = document.getElementById("admission-form");
+      const result = document.getElementById("result");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        // Ensure TOKEN is set via auth.js
+        if (!TOKEN) await login("admin", "yourpassword");
+
+        const data = {
+          full_name: document.getElementById("full_name").value,
+          email: document.getElementById("email").value,
+          phone: document.getElementById("phone").value,
+          course: document.getElementById("course").value,
+          notes: document.getElementById("notes").value,
+        };
+
+        try {
+          const response = await fetch(
+            "http://127.0.0.1:8000/api/admissions/",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                ...authHeaders(),
+              },
+              body: JSON.stringify(data),
+            }
+          );
+
+          if (response.ok) {
+            result.innerHTML = "<p>Application submitted successfully!</p>";
+            form.reset();
+          } else {
+            const errData = await response.json();
+            result.innerHTML = `<p>Error: ${JSON.stringify(errData)}</p>`;
+          }
+        } catch (err) {
+          console.error(err);
+          result.innerHTML = "<p>Network error or server issue</p>";
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Proactive VCR - Instructor</title>
+    <style>
+      body {
+        margin: 0;
+        background: #0e0e0e;
+        color: #fff;
+        font-family: Arial, sans-serif;
+        overflow: hidden;
+      }
+      .vcr-header {
+        height: 60px;
+        background: #111;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        border-bottom: 1px solid #222;
+      }
+      .vcr-title {
+        font-size: 20px;
+        font-weight: bold;
+      }
+      .connection-status {
+        display: flex;
+        gap: 4px;
+      }
+      .signal {
+        width: 4px;
+        background: #333;
+        border-radius: 1px;
+      }
+      .signal.active {
+        background: #4caf50;
+      }
+      .signal:nth-child(1) {
+        height: 6px;
+      }
+      .signal:nth-child(2) {
+        height: 10px;
+      }
+      .signal:nth-child(3) {
+        height: 14px;
+      }
+      .signal:nth-child(4) {
+        height: 18px;
+      }
+
+      .vcr-container {
+        display: flex;
+        height: calc(100vh - 60px);
+      }
+      .vcr-board {
+        flex: 1;
+        background: black;
+        position: relative;
+        padding: 10px;
+        overflow: hidden;
+      }
+      .board-placeholder {
+        opacity: 0.5;
+        text-align: center;
+        pointer-events: none;
+      }
+
+      canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
+      .vcr-toolbar {
+        width: 80px;
+        background: #111;
+        border-left: 1px solid #222;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 15px;
+        gap: 15px;
+      }
+      .tool {
+        width: 40px;
+        height: 40px;
+        background: #1c1c1c;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      .tool:hover {
+        background: #333;
+      }
+      button {
+        background: #4caf50;
+        color: #000;
+        border: none;
+        padding: 5px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="vcr-header">
+      <div class="vcr-title">Proactive VCR - Instructor</div>
+      <div style="display: flex; gap: 15px; align-items: center">
+        <button id="startClassBtn">Start Class</button>
+        <div class="connection-status">
+          <div class="signal active"></div>
+          <div class="signal active"></div>
+          <div class="signal active"></div>
+          <div class="signal"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="vcr-container">
+      <div class="vcr-board" id="vcrBoard">
+        <div class="board-placeholder">Waiting for your input...</div>
+        <canvas id="boardCanvas"></canvas>
+      </div>
+
+      <div class="vcr-toolbar">
+        <div class="tool" data-tool="pen" title="Pen">✏️</div>
+        <div class="tool" data-tool="eraser" title="Eraser">🩹</div>
+        <div class="tool" data-tool="clear" title="Clear Board">🗑️</div>
+        <div class="tool" data-tool="color" title="Colors">🎨</div>
+        <div class="tool" data-tool="upload_image" title="Upload Image">🖼️</div>
+        <div class="tool" data-tool="upload_pdf" title="Upload PDF">📄</div>
+        <div class="tool" data-tool="play_video" title="Play Video">▶️</div>
+        <div class="tool" data-tool="mute_students" title="Mute Students">
+          🔇
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const board = document.getElementById("vcrBoard");
+      const canvas = document.getElementById("boardCanvas");
+      const ctx = canvas.getContext("2d");
+      const startBtn = document.getElementById("startClassBtn");
+      const placeholder = document.querySelector(".board-placeholder");
+
+      // =====================
+      // Canvas setup
+      // =====================
+      function resizeCanvas() {
+        const rect = board.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+      }
+      resizeCanvas();
+      window.addEventListener("resize", resizeCanvas);
+
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+
+      let drawing = false;
+      let currentTool = "pen";
+      let currentColor = "#ffffff";
+
+      function getPos(e) {
+        const r = canvas.getBoundingClientRect();
+        return { x: e.clientX - r.left, y: e.clientY - r.top };
+      }
+
+      // =====================
+      // Drawing
+      // =====================
+      canvas.addEventListener("mousedown", (e) => {
+        if (!["pen", "eraser"].includes(currentTool)) return;
+        drawing = true;
+        const p = getPos(e);
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+      });
+
+      canvas.addEventListener("mousemove", (e) => {
+        if (!drawing) return;
+        const p = getPos(e);
+        ctx.lineWidth = currentTool === "eraser" ? 20 : 2;
+        ctx.strokeStyle = currentTool === "eraser" ? "#000" : currentColor;
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+      });
+
+      canvas.addEventListener("mouseup", () => (drawing = false));
+      canvas.addEventListener("mouseleave", () => (drawing = false));
+
+      // =====================
+      // WebSocket
+      // =====================
+      const socket = new WebSocket(
+        "ws://" + window.location.host + "/ws/school/vcr/"
+      );
+
+      socket.onopen = () => console.log("Instructor connected");
+
+      socket.onmessage = (e) => {
+        const data = JSON.parse(e.data);
+
+        if (data.type === "raise_hand") {
+          alert(`✋ ${data.student} raised hand`);
+        }
+
+        if (data.type === "student_list") {
+          updateStudentsDropdown(data.students);
+        }
+      };
+
+      // =====================
+      // Students dropdown
+      // =====================
+      function updateStudentsDropdown(students) {
+        let select = document.getElementById("connectedStudents");
+        if (!select) return;
+
+        select.innerHTML = "<option>Connected Students</option>";
+        students.forEach((s) => {
+          const opt = document.createElement("option");
+          opt.textContent = s;
+          select.appendChild(opt);
+        });
+      }
+
+      // =====================
+      // Toolbar actions
+      // =====================
+      document.querySelectorAll(".tool").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const tool = btn.title;
+
+          // ---- Drawing tools
+          if (tool === "Pen") currentTool = "pen";
+          if (tool === "Eraser") currentTool = "eraser";
+
+          // ---- Color
+          if (tool === "Colors") {
+            const picker = document.createElement("input");
+            picker.type = "color";
+            picker.value = currentColor;
+            picker.oninput = (e) => (currentColor = e.target.value);
+            picker.click();
+          }
+
+          // ---- Clear board
+          if (tool === "Clear Board") {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            socket.send(JSON.stringify({ type: "clear_board" }));
+          }
+
+          // ---- Upload Image
+          if (tool === "Upload Image") {
+            const input = document.createElement("input");
+            input.type = "file";
+            input.accept = "image/*";
+            input.onchange = () => {
+              const img = new Image();
+              img.onload = () =>
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+              img.src = URL.createObjectURL(input.files[0]);
+            };
+            input.click();
+          }
+
+          // ---- Upload PDF (frontend ready, backend hook)
+          if (tool === "Upload PDF") {
+            const input = document.createElement("input");
+            input.type = "file";
+            input.accept = "application/pdf";
+            input.onchange = () => {
+              socket.send(JSON.stringify({ type: "pdf_upload" }));
+              alert("PDF uploaded. Backend render hook ready.");
+            };
+            input.click();
+          }
+
+          // ---- Play Video
+          if (tool === "Play Video") {
+            const url = prompt("Enter video URL");
+            if (!url) return;
+            const video = document.createElement("video");
+            video.src = url;
+            video.controls = true;
+            video.style.position = "absolute";
+            video.style.bottom = "10px";
+            video.style.left = "10px";
+            video.style.width = "300px";
+            board.appendChild(video);
+            video.play();
+          }
+
+          // ---- Mute students
+          if (tool === "Mute Students") {
+            socket.send(JSON.stringify({ type: "mute_students" }));
+            alert("All students muted");
+          }
+        });
+      });
+
+      // =====================
+      // Start class
+      // =====================
+      startBtn.addEventListener("click", () => {
+        placeholder.innerText = "You are live. Students are connected.";
+        socket.send(JSON.stringify({ type: "class_start" }));
+      });
+    </script>
+  </body>
+</html>

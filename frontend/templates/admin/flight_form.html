@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Add Flight</title>
+    <link rel="stylesheet" href="../assets/style.css" />
+  </head>
+  <body>
+    <h1>Add New Flight</h1>
+
+    <form method="POST" action="">
+      {% csrf_token %} {{ form.as_p }}
+      <button type="submit">Add Flight</button>
+    </form>
+
+    <a href="flight.html">Back to Flights</a>
+  </body>
+</html>

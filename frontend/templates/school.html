@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Proactive VCR - Student</title>
+
+    <style>
+      body {
+        margin: 0;
+        background: #0e0e0e;
+        color: #fff;
+        font-family: Arial, sans-serif;
+        overflow: hidden;
+      }
+
+      /* HEADER */
+      .vcr-header {
+        height: 60px;
+        background: #111;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        border-bottom: 1px solid #222;
+      }
+
+      .vcr-title {
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+      .vcr-status {
+        margin-left: 10px;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 13px;
+        font-weight: bold;
+      }
+
+      .vcr-status.offline {
+        background: #b71c1c;
+        color: #fff;
+      }
+
+      .vcr-status.online {
+        background: #4caf50;
+        color: #000;
+      }
+
+      /* Connection Status */
+      .connection-status {
+        display: flex;
+        gap: 4px;
+      }
+
+      .signal {
+        width: 4px;
+        background: #333;
+        border-radius: 1px;
+      }
+
+      .signal.active {
+        background: #4caf50;
+      }
+
+      .signal:nth-child(1) {
+        height: 6px;
+      }
+      .signal:nth-child(2) {
+        height: 10px;
+      }
+      .signal:nth-child(3) {
+        height: 14px;
+      }
+      .signal:nth-child(4) {
+        height: 18px;
+      }
+
+      /* MAIN */
+      .vcr-container {
+        display: flex;
+        height: calc(100vh - 60px);
+      }
+
+      .vcr-board {
+        flex: 1;
+        background: #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-size: 18px;
+        opacity: 0.6;
+      }
+
+      /* TOOLBAR */
+      .vcr-toolbar {
+        width: 50px;
+        background: #111;
+        border-left: 1px solid #222;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 15px;
+        gap: 14px;
+      }
+
+      .tool {
+        width: 34px;
+        height: 34px;
+        background: #1c1c1c;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .tool.raise {
+        opacity: 1;
+        cursor: pointer;
+      }
+
+      .tool:hover {
+        background: #222;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- HEADER -->
+    <div class="vcr-header">
+      <div class="vcr-title">
+        Proactive VCR
+        <span class="vcr-status offline" id="classStatus">OFFLINE</span>
+      </div>
+
+      <div class="connection-status">
+        <div class="signal active"></div>
+        <div class="signal active"></div>
+        <div class="signal active"></div>
+        <div class="signal"></div>
+      </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="vcr-container">
+      <div class="vcr-board" id="boardMessage">
+        Waiting for instructor to start the class…
+      </div>
+
+      <div class="vcr-toolbar">
+        <div class="tool">🖱️</div>
+        <div class="tool">✏️</div>
+        <div class="tool raise" id="raiseHandBtn" title="Raise Hand">✋</div>
+      </div>
+    </div>
+
+    <!-- ✅ YOUR SCRIPT – CLEANLY INTEGRATED -->
+    <script>
+      const classStatus = document.getElementById("classStatus");
+      const boardMessage = document.getElementById("boardMessage");
+      const raiseHandBtn = document.getElementById("raiseHandBtn");
+      const board = document.querySelector(".vcr-board");
+
+      // ======================
+      // Canvas (VIEW ONLY)
+      // ======================
+      const canvas = document.createElement("canvas");
+      canvas.style.position = "absolute";
+      canvas.style.top = "0";
+      canvas.style.left = "0";
+      canvas.style.pointerEvents = "none";
+      board.innerHTML = "";
+      board.appendChild(canvas);
+
+      const ctx = canvas.getContext("2d");
+
+      function resizeCanvas() {
+        const rect = board.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+      }
+      resizeCanvas();
+      window.addEventListener("resize", resizeCanvas);
+
+      // ======================
+      // WebSocket
+      // ======================
+      const socket = new WebSocket(
+        "ws://" + window.location.host + "/ws/school/vcr/"
+      );
+
+      let muted = false;
+
+      socket.onopen = () => {
+        console.log("Student connected to VCR");
+      };
+
+      socket.onmessage = (e) => {
+        const data = JSON.parse(e.data);
+
+        // ---- Class started
+        if (data.type === "class_start") {
+          classStatus.classList.remove("offline");
+          classStatus.classList.add("online");
+          classStatus.innerText = "LIVE";
+        }
+
+        // ---- Drawing sync
+        if (data.type === "draw") {
+          ctx.strokeStyle = data.color;
+          ctx.lineWidth = data.size;
+          ctx.beginPath();
+          ctx.moveTo(data.from.x, data.from.y);
+          ctx.lineTo(data.to.x, data.to.y);
+          ctx.stroke();
+        }
+
+        // ---- Clear board
+        if (data.type === "clear_board") {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // ---- Image display
+        if (data.type === "image") {
+          const img = new Image();
+          img.onload = () =>
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          img.src = data.src;
+        }
+
+        // ---- Video play
+        if (data.type === "video") {
+          const video = document.createElement("video");
+          video.src = data.url;
+          video.controls = true;
+          video.autoplay = true;
+          video.style.position = "absolute";
+          video.style.bottom = "10px";
+          video.style.left = "10px";
+          video.style.width = "300px";
+          board.appendChild(video);
+        }
+
+        // ---- Mute students
+        if (data.type === "mute_students") {
+          muted = true;
+          alert("🔇 You have been muted by the instructor");
+        }
+      };
+
+      // ======================
+      // Raise Hand
+      // ======================
+      raiseHandBtn.addEventListener("click", () => {
+        socket.send(
+          JSON.stringify({
+            type: "raise_hand",
+            student: "Student",
+          })
+        );
+      });
+    </script>
+  </body>
+</html>

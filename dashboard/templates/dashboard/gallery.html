@@ -1,0 +1,27 @@
+<h1>Gallery</h1>
+
+<a href="{% url 'dashboard-gallery-upload' %}"> ➕ Upload New Image </a>
+
+<hr />
+
+{% if images %}
+<div
+  style="
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 200px);
+    gap: 15px;
+  "
+>
+  {% for img in images %}
+  <div style="border: 1px solid #ccc; padding: 10px">
+    <img src="{{ img.image.url }}" style="width: 100%" />
+    <p>{{ img.description }}</p>
+    <small>{{ img.created_at }}</small>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<p>No images yet.</p>
+{% endif %}
+</body>
+</html>

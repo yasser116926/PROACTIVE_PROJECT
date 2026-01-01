@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Proactive Air Service - Flight Operations</title>
+
+    <style>
+      /* ===== BASE ===== */
+      body {
+        margin: 0;
+        padding: 40px 20px;
+        background: #f4f4f4;
+        font-family: Arial, sans-serif;
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #222;
+      }
+
+      h3 {
+        margin: 0 0 10px 0;
+        color: #111;
+      }
+
+      /* ===== WEATHER CARD ===== */
+      #weather {
+        max-width: 900px;
+        margin: 0 auto 40px auto;
+        background: #ffffff;
+        padding: 24px;
+        border-radius: 16px;
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+        transition: 0.3s;
+      }
+
+      #weather:hover {
+        box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.6),
+          0 16px 36px rgba(255, 215, 0, 0.35);
+      }
+
+      #weather p {
+        margin: 10px 0;
+        color: #333;
+        line-height: 1.5;
+      }
+
+      #icao {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 12px;
+      }
+
+      /* ===== TABLES GRID ===== */
+      .tables {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 30px;
+      }
+
+      /* ===== FLIGHT TABLE CARD ===== */
+      .flight-card {
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 16px;
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+        transition: 0.3s;
+      }
+
+      .flight-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.6),
+          0 14px 34px rgba(255, 215, 0, 0.35);
+      }
+
+      /* ===== TABLE STYLE ===== */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+
+      th,
+      td {
+        padding: 10px;
+        text-align: left;
+        font-size: 14px;
+      }
+
+      th {
+        background: #1e1e1e;
+        color: #fff;
+        border-radius: 6px;
+      }
+
+      tr:nth-child(even) {
+        background: #f1f1f1;
+      }
+
+      tr:hover {
+        background: rgba(255, 215, 0, 0.15);
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Flight Operations</h1>
+
+    <!-- 🌦 WEATHER -->
+    <div id="weather">
+      <h3 id="icao">Loading ICAO...</h3>
+      <p><strong>METAR:</strong> <span id="metar">Loading...</span></p>
+      <p><strong>TAF:</strong> <span id="taf">Loading...</span></p>
+    </div>
+
+    <!-- ✈️ FLIGHT TABLES -->
+    <div class="tables">
+      <div class="flight-card">
+        <h3>5Y-CCZ</h3>
+        <table id="ccz"></table>
+      </div>
+
+      <div class="flight-card">
+        <h3>5Y-PZO</h3>
+        <table id="pzo"></table>
+      </div>
+
+      <div class="flight-card">
+        <h3>FMX</h3>
+        <table id="fmx"></table>
+      </div>
+    </div>
+
+    <script>
+      async function loadFlights() {
+        const res = await fetch(
+          "http://127.0.0.1:8000/flights/api/dashboard/?icao=HKNW"
+        );
+        const data = await res.json();
+
+        document.getElementById("icao").innerText =
+          "ICAO: " + data.weather.icao;
+        document.getElementById("metar").innerText = data.weather.metar;
+        document.getElementById("taf").innerText = data.weather.taf;
+
+        function fillTable(id, rows) {
+          const table = document.getElementById(id);
+          table.innerHTML = `
+            <tr>
+              <th>Time</th>
+              <th>Name</th>
+              <th>EX</th>
+            </tr>
+          `;
+
+          rows.forEach((r) => {
+            table.innerHTML += `
+              <tr>
+                <td>${r.time}</td>
+                <td>${r.name}</td>
+                <td>${r.ex}</td>
+              </tr>
+            `;
+          });
+        }
+
+        fillTable("ccz", data.flights["5Y-CCZ"]);
+        fillTable("pzo", data.flights["5Y-PZO"]);
+        fillTable("fmx", data.flights["FMX"]);
+      }
+
+      loadFlights();
+    </script>
+  </body>
+</html>

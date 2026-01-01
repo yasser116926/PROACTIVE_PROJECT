@@ -1,0 +1,215 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Proactive Air Service</title>
+
+    <style>
+      body {
+        min-height: 100%;
+      }
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f5f6f7;
+        overflow-y: auto;
+      }
+
+      /* TOP BAR */
+      .top-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 80px;
+        width: 100%;
+        background: linear-gradient(
+          to right,
+          #0056b3 0%,
+          #0056b3 45%,
+          #f4c430 55%,
+          #f4c430 100%
+        );
+        display: flex;
+        align-items: center;
+        padding-left: 25px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        z-index: 10;
+      }
+
+      /* LOGO */
+      .logo {
+        height: 55px;
+        object-fit: contain;
+        z-index: 30;
+      }
+
+      /* PAGE CONTENT OFFSET */
+      .page-content {
+        padding: 40px;
+        padding-top: 160px;
+      }
+
+      /* ---------- BACKGROUND PATTERN ---------- */
+      .bg-pattern {
+        position: fixed;
+        inset: 0;
+        background-image: linear-gradient(
+            135deg,
+            rgba(0, 0, 0, 0.03) 25%,
+            transparent 25%
+          ),
+          linear-gradient(225deg, rgba(0, 0, 0, 0.03) 25%, transparent 25%);
+        background-size: 60px 60px;
+        z-index: -1;
+        transition: 0.3s;
+      }
+
+      body:hover .bg-pattern {
+        background-image: linear-gradient(
+            135deg,
+            rgba(244, 196, 48, 0.15) 25%,
+            transparent 25%
+          ),
+          linear-gradient(225deg, rgba(244, 196, 48, 0.15) 25%, transparent 25%);
+      }
+
+      /* ---------- LAYOUT ---------- */
+      .page {
+        display: flex;
+        flex-direction: column; /* KEY */
+        padding: 50px;
+        min-height: 100vh; /* PAGE CAN GROW */
+        overflow: auto;
+      }
+
+      /* ---------- LEFT ICON NAV ---------- */
+      .left-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        width: 100px;
+        padding-top: 60px;
+      }
+
+      .nav-item {
+        background: #0b3c7d;
+        color: white;
+        padding: 16px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: bold;
+        text-align: center;
+        transition: 0.25s;
+      }
+
+      .nav-item:hover {
+        transform: scale(1.08);
+        box-shadow: 0 0 15px rgba(244, 196, 48, 0.9);
+      }
+
+      /* ---------- RIGHT SIDE ---------- */
+      .right-panel {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        padding-top: 60px;
+      }
+
+      .staff-dashboard {
+        background: #000;
+        color: white;
+        padding: 16px 26px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: bold;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 56px;
+        box-sizing: border-box;
+        transition: all 0.25s ease;
+      }
+
+      .staff-dashboard:hover {
+        transform: scale(1.08);
+        box-shadow: 0 0 18px rgba(220, 53, 69, 0.9);
+      }
+
+      /* ---------- AUTH ---------- */
+      .auth-box {
+        margin: 40px;
+      }
+
+      .auth-btn {
+        display: inline-block;
+        margin-right: 15px;
+        padding: 14px 22px;
+        background: #0b3c7d;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+      }
+
+      .auth-btn.secondary {
+        background: #6c757d;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="bg-pattern"></div>
+
+    <!-- TOP BAR -->
+    <!-- TOP BAR -->
+    <div class="top-bar">
+      <img
+        src="{% static 'logo.png' %}"
+        alt="Proactive Air Service"
+        class="logo"
+      />
+    </div>
+
+    {% if not request.user.is_authenticated %}
+    <!-- 🔐 NOT LOGGED IN -->
+    <div class="auth-box">
+      <p>Please log in or create an account to continue.</p>
+      <a href="{% url 'accounts:login' %}" class="auth-btn">Login</a>
+      <a href="{% url 'accounts:signup' %}" class="auth-btn secondary">
+        Create Account
+      </a>
+    </div>
+
+    {% else %}
+    <!-- ✅ LOGGED IN -->
+    <div class="page">
+      <div class="left-nav">
+        {% if request.user.is_approved %}
+        <a href="news/" class="nav-item">News</a>
+        <a href="classes/" class="nav-item">Classes</a>
+        <a href="events/" class="nav-item">Events</a>
+        <a href="gallery/" class="nav-item">Gallery</a>
+        <a href="library/" class="nav-item">Library</a>
+        <a href="posts/" class="nav-item">Posts</a>
+        <a href="flight/" class="nav-item">Flight</a>
+        <a href="notam/" class="nav-item">Notam</a>
+        <a href="school/" class="nav-item">School</a>
+        <a href="admission/" class="nav-item">Admission</a>
+        {% endif %}
+      </div>
+
+      <div class="right-panel">
+        {% if request.user.role != "student" and request.user.is_approved %}
+        <a href="/dashboard/" class="staff-dashboard">Staff Dashboard</a>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if not request.user.is_approved %}
+    <p style="color: #c0392b; padding: 40px">
+      Your account is pending approval by staff.
+    </p>
+    {% endif %} {% endif %}
+  </body>
+</html>

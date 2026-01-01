@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Create Event</title>
+
+    <style>
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: #f2f3f5;
+        color: #333;
+      }
+
+      /* ===== Top Bar ===== */
+      .top-bar {
+        height: 80px;
+        background: linear-gradient(90deg, #0d47a1, #1976d2);
+        display: flex;
+        align-items: center;
+        padding: 0 40px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      }
+
+      .top-bar h2 {
+        color: #fff;
+        margin: 0;
+        font-size: 24px;
+      }
+
+      /* ===== Page Layout ===== */
+      .page {
+        display: flex;
+        justify-content: center;
+        padding: 60px 20px;
+      }
+
+      .form-card {
+        background: #ffffff;
+        padding: 35px 40px;
+        border-radius: 16px;
+        width: 100%;
+        max-width: 520px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      }
+
+      .form-card h3 {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #0d47a1;
+      }
+
+      /* ===== Django Form Styling ===== */
+      form p {
+        margin-bottom: 18px;
+      }
+
+      label {
+        font-weight: 600;
+        display: block;
+        margin-bottom: 6px;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+        transition: 0.25s;
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus {
+        outline: none;
+        border-color: #ffc107;
+        box-shadow: 0 0 10px rgba(255, 193, 7, 0.6);
+      }
+
+      textarea {
+        min-height: 100px;
+        resize: vertical;
+      }
+
+      /* ===== Submit Button ===== */
+      button {
+        width: 100%;
+        margin-top: 15px;
+        padding: 14px;
+        border-radius: 10px;
+        border: none;
+        background: #0d47a1;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.25s;
+      }
+
+      button:hover {
+        background: #08306b;
+        transform: scale(1.04);
+        box-shadow: 0 0 18px rgba(255, 193, 7, 0.8);
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <h2>Proactive Staff Dashboard</h2>
+    </div>
+
+    <!-- Content -->
+    <div class="page">
+      <div class="form-card">
+        <h3>Create New Event</h3>
+
+        <form method="post">
+          {% csrf_token %} {{ form.as_p }}
+
+          <button type="submit">Create Event</button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
