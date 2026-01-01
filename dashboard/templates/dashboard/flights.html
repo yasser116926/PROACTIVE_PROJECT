@@ -1,47 +1,139 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>Dashboard – Flights</title>
+    <meta charset="UTF-8" />
+    <title>Manage – Flights</title>
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background: #f4f6f8;
+      }
+
+      .page-wrapper {
+        max-width: 1000px;
+        margin: 60px auto;
+        background: #ffffff;
+        padding: 30px 40px;
+        border-radius: 10px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #2c3e50;
+      }
+
+      h3 {
+        margin-top: 30px;
+        color: #34495e;
+      }
+
+      form p {
+        margin-bottom: 15px;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+        box-sizing: border-box;
+      }
+
+      button {
+        padding: 10px 18px;
+        background: #1abc9c;
+        border: none;
+        color: white;
+        font-size: 14px;
+        font-weight: bold;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+
+      button:hover {
+        background: #16a085;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+      }
+
+      table th,
+      table td {
+        padding: 12px;
+        text-align: center;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      table th {
+        background: #ecf0f1;
+        font-weight: bold;
+        color: #333;
+      }
+
+      table tr:hover {
+        background: #f9f9f9;
+      }
+
+      .empty-text {
+        color: #777;
+        font-style: italic;
+      }
+    </style>
   </head>
+
   <body>
-    <h1>Flight Dashboard</h1>
+    <div class="page-wrapper">
+      <h1>Flight Dashboard</h1>
 
-    <h3>Add Flight</h3>
-    {% if form %}
-    <form method="post">
-      {% csrf_token %} {{ form.as_p }}
-      <button type="submit">Add Flight</button>
-    </form>
-    {% else %}
-    <p>Flight form not available.</p>
-    {% endif %}
+      <h3>Add Flight</h3>
 
-    <hr />
+      {% if form %}
+      <form method="post">
+        {% csrf_token %} {{ form.as_p }}
+        <button type="submit">Add Flight</button>
+      </form>
+      {% else %}
+      <p class="empty-text">Flight form not available.</p>
+      {% endif %}
 
-    <h3>Current Flights</h3>
-    {% if flights %}
-    <table border="1" cellpadding="6">
-      <tr>
-        <th>Aircraft</th>
-        <th>Time</th>
-        <th>Name</th>
-        <th>EX</th>
-      </tr>
-      {% for f in flights %}
-      <tr>
-        <td>{{ f.aircraft }}</td>
-        <td>{{ f.time }}</td>
-        <td>{{ f.name }}</td>
-        <td>{{ f.ex }}</td>
-      </tr>
-      {% empty %}
-      <tr>
-        <td colspan="4">No flights yet</td>
-      </tr>
-      {% endfor %}
-    </table>
-    {% else %}
-    <p>No flight data available or database not ready.</p>
-    {% endif %}
+      <h3>Current Flights</h3>
+
+      {% if flights %}
+      <table>
+        <tr>
+          <th>Aircraft</th>
+          <th>Time</th>
+          <th>Name</th>
+          <th>EX</th>
+        </tr>
+
+        {% for f in flights %}
+        <tr>
+          <td>{{ f.aircraft }}</td>
+          <td>{{ f.time }}</td>
+          <td>{{ f.name }}</td>
+          <td>{{ f.ex }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="4" class="empty-text">No flights yet</td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% else %}
+      <p class="empty-text">No flight data available or database not ready.</p>
+      {% endif %}
+    </div>
   </body>
 </html>
