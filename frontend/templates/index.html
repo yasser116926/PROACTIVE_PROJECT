@@ -164,6 +164,37 @@
       .auth-btn.secondary {
         background: #6c757d;
       }
+
+      /* ---------- CENTER PANEL ---------- */
+      .center-panel {
+        margin: 0 auto;
+        margin-top: 80px;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.65);
+        backdrop-filter: blur(14px);
+        padding: 30px 50px;
+        border-radius: 18px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        min-width: 320px;
+      }
+
+      .time-box {
+        font-size: 34px;
+        font-weight: bold;
+        color: #0b3c7d;
+      }
+
+      .zulu-time {
+        font-size: 20px;
+        margin-top: 6px;
+        color: #555;
+      }
+
+      .weather-box {
+        margin-top: 20px;
+        font-size: 18px;
+        color: #222;
+      }
     </style>
   </head>
 
@@ -196,6 +227,20 @@
     {% else %}
     <!-- ✅ LOGGED IN -->
     <div class="page">
+      <!-- CENTER INFO PANEL -->
+      <div class="center-panel">
+        <div class="time-box">
+          <div class="local-time" id="local-time">--:--:--</div>
+          <div class="zulu-time" id="zulu-time">--:--:-- Z</div>
+        </div>
+
+        <div class="weather-box">
+          <div id="weather-temp">Temp: --°C</div>
+          <div id="weather-dew">Dew Point: --°C</div>
+          <div id="weather-cond">Condition: --</div>
+        </div>
+      </div>
+
       <div class="left-nav">
         {% if request.user.is_approved %}
         <a href="news/" class="nav-item">News</a>
@@ -239,6 +284,20 @@
 
         greetingEl.textContent = `${greeting}, {{ request.user.first_name|default:request.user.username }}`;
       })();
+      function updateTimes() {
+        const now = new Date();
+
+        // Local Time
+        document.getElementById("local-time").textContent =
+          now.toLocaleTimeString("en-GB", { hour12: false });
+
+        // Zulu Time (UTC)
+        document.getElementById("zulu-time").textContent =
+          now.toUTCString().slice(17, 25) + " Z";
+      }
+
+      setInterval(updateTimes, 1000);
+      updateTimes();
     </script>
   </body>
 </html>
