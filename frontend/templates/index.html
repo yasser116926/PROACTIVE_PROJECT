@@ -164,36 +164,20 @@
       .auth-btn.secondary {
         background: #6c757d;
       }
-
-      /* ---------- CENTER PANEL ---------- */
-      .center-panel {
-        margin: 0 auto;
-        margin-top: 80px;
-        text-align: center;
-        background: rgba(255, 255, 255, 0.65);
-        backdrop-filter: blur(14px);
-        padding: 30px 50px;
-        border-radius: 18px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-        min-width: 320px;
-      }
-
-      .time-box {
-        font-size: 34px;
+      /* ---------- TOPBAR TIME ---------- */
+      .topbar-time {
+        margin-left: auto; /* push to right side */
+        margin-right: 80px; /* space for profile icon */
+        padding: 6px 14px;
+        background: rgba(173, 216, 230, 0.4); /* light blue glass */
+        backdrop-filter: blur(8px);
+        border-radius: 10px;
         font-weight: bold;
+        font-size: 14px;
         color: #0b3c7d;
-      }
-
-      .zulu-time {
-        font-size: 20px;
-        margin-top: 6px;
-        color: #555;
-      }
-
-      .weather-box {
-        margin-top: 20px;
-        font-size: 18px;
-        color: #222;
+        display: flex;
+        align-items: center;
+        gap: 6px;
       }
     </style>
   </head>
@@ -201,7 +185,6 @@
   <body>
     <div class="bg-pattern"></div>
 
-    <!-- TOP BAR -->
     <!-- TOP BAR -->
     <div class="top-bar">
       <img
@@ -212,6 +195,16 @@
       {% if request.user.is_authenticated %}
       <div class="greeting" id="greeting-text">welcome</div>
       {% endif %}
+      <!-- TIME BOX MIDDLE-RIGHT -->
+      <div class="topbar-time">
+        <span id="local-time">--:--:--</span> |
+        <span id="zulu-time">--:--:-- Z</span>
+      </div>
+
+      <!-- PROFILE ICON FAR-RIGHT -->
+      <div class="profile-icon">
+        <img src="{% static 'profile-placeholder.png' %}" alt="Profile" />
+      </div>
     </div>
 
     {% if not request.user.is_authenticated %}
@@ -227,20 +220,6 @@
     {% else %}
     <!-- ✅ LOGGED IN -->
     <div class="page">
-      <!-- CENTER INFO PANEL -->
-      <div class="center-panel">
-        <div class="time-box">
-          <div class="local-time" id="local-time">--:--:--</div>
-          <div class="zulu-time" id="zulu-time">--:--:-- Z</div>
-        </div>
-
-        <div class="weather-box">
-          <div id="weather-temp">Temp: --°C</div>
-          <div id="weather-dew">Dew Point: --°C</div>
-          <div id="weather-cond">Condition: --</div>
-        </div>
-      </div>
-
       <div class="left-nav">
         {% if request.user.is_approved %}
         <a href="news/" class="nav-item">News</a>
@@ -287,13 +266,17 @@
       function updateTimes() {
         const now = new Date();
 
-        // Local Time
+        // Local time
         document.getElementById("local-time").textContent =
           now.toLocaleTimeString("en-GB", { hour12: false });
 
-        // Zulu Time (UTC)
-        document.getElementById("zulu-time").textContent =
-          now.toUTCString().slice(17, 25) + " Z";
+        // Zulu time (UTC)
+        const utcHours = now.getUTCHours().toString().padStart(2, "0");
+        const utcMinutes = now.getUTCMinutes().toString().padStart(2, "0");
+        const utcSeconds = now.getUTCSeconds().toString().padStart(2, "0");
+        document.getElementById(
+          "zulu-time"
+        ).textContent = `${utcHours}:${utcMinutes}:${utcSeconds} Z`;
       }
 
       setInterval(updateTimes, 1000);
