@@ -44,6 +44,15 @@
         z-index: 30;
       }
 
+      /* Greeting text in top bar */
+      .greeting {
+        margin-left: 25px;
+        font-size: 20px;
+        font-weight: bold;
+        color: white;
+        white-space: nowrap;
+      }
+
       /* PAGE CONTENT OFFSET */
       .page-content {
         padding: 40px;
@@ -169,6 +178,9 @@
         alt="Proactive Air Service"
         class="logo"
       />
+      {% if request.user.is_authenticated %}
+      <div class="greeting" id="greeting-text">welcome</div>
+      {% endif %}
     </div>
 
     {% if not request.user.is_authenticated %}
@@ -196,6 +208,7 @@
         <a href="notam/" class="nav-item">Notam</a>
         <a href="school/" class="nav-item">School</a>
         <a href="admission/" class="nav-item">Admission</a>
+
         {% endif %}
       </div>
 
@@ -211,5 +224,21 @@
       Your account is pending approval by staff.
     </p>
     {% endif %} {% endif %}
+
+    <script>
+      (function () {
+        const greetingEl = document.getElementById("greeting-text");
+        if (!greetingEl) return;
+
+        const hour = new Date().getHours();
+        let greeting = "Welcome";
+
+        if (hour >= 5 && hour < 12) greeting = "Good Morning";
+        else if (hour >= 12 && hour < 17) greeting = "Good Afternoon";
+        else greeting = "Good Evening";
+
+        greetingEl.textContent = `${greeting}, {{ request.user.first_name|default:request.user.username }}`;
+      })();
+    </script>
   </body>
 </html>

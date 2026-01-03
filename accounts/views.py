@@ -11,48 +11,45 @@ from django.utils import timezone
 def is_admin_or_management(user):
     return user.role in ["admin", "management"]
 
-# Signup
-def signup_view(request):
-    if request.method == "POST":
-        form = SignupForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Account created. Await admin approval.")
-            return redirect("accounts:login")
-    else:
-        form = SignupForm()
-    return render(request, "accounts/signup.html", {"form": form})
+
 
 # Login
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
+
 def login_view(request):
     if request.method == "POST":
         username = request.POST.get("username")
         password = request.POST.get("password")
 
         user = authenticate(request, username=username, password=password)
-
-        if user is None:
-            return render(request, "frontend/login.html", {"error": "Invalid credentials"})
-
-        # ✅ SUPERUSER BYPASS (NO APPROVAL EVER)
-        if user.is_superuser:
+        if user:
             login(request, user)
-            return redirect("dashboard:home")
+            return redirect("/")
+        else:
+            messages.error(request, "Invalid username or password")
 
-        # ✅ APPROVAL CHECK FOR NON-ADMINS
-        if not user.is_approved:
-            return render(request, "accounts/pending.html")
+    return render(request, "login.html")
 
-        login(request, user)
 
-        # ✅ ROLE-BASED REDIRECT
-        if user.role in ["admin", "management", "instructor"]:
-            return redirect("dashboard:home")
+def signup_view(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        email = request.POST.get("email")
+        password = request.POST.get("password")
 
-        # ✅ STUDENT
-        return redirect("frontend:index")
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Username already exists")
+        else:
+            User.objects.create_user(
+                username=username,
+                email=email,
+                password=password
+            )
+            return redirect("accounts:login")
 
-    return render(request, "frontend/login.html")
+    return render(request, "signup.html")
 
 
 
