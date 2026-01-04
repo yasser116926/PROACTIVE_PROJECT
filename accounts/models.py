@@ -47,6 +47,9 @@ class Profile(models.Model):
     role = models.CharField(max_length=20, choices=UserRole.ROLE_CHOICES, default="student")
     approved = models.BooleanField(default=False)
     can_access_flights = models.BooleanField(default=False)
+    phone = models.CharField(max_length=20 ,blank=True)
+    image = models.ImageField(upload_to='profile/', default='progile/defult.png')
+    bio = models.TextField(blank=True)
 
     def __str__(self):
         return f"{self.user.username} Profile"

@@ -1,29 +1,42 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>Profile</title>
+    <meta charset="UTF-8" />
+    <title>Your Profile</title>
+
     <style>
       body {
-        background: #0e0e0e;
-        color: white;
-        font-family: Arial;
+        margin: 0;
+        background: linear-gradient(135deg, #0b3c7d, #000814);
+        font-family: Arial, sans-serif;
+        min-height: 100vh;
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh;
+        color: white;
       }
 
+      /* Glass card */
       .profile-card {
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(18px);
+        border-radius: 22px;
+        padding: 35px 45px;
+        width: 380px;
         text-align: center;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
       }
 
+      /* Avatar */
       .avatar {
         width: 160px;
         height: 160px;
         border-radius: 50%;
-        border: 5px solid;
+        border: 5px solid #f4c430;
         overflow: hidden;
         margin: auto;
+        background: #111;
       }
 
       .avatar img {
@@ -32,50 +45,98 @@
         object-fit: cover;
       }
 
+      /* Role colors */
       .ADMIN {
-        border-color: black;
+        border-color: #000;
       }
       .MANAGEMENT {
-        border-color: red;
+        border-color: #e74c3c;
       }
       .INSTRUCTOR {
-        border-color: blue;
+        border-color: #3498db;
       }
       .STUDENT {
-        border-color: yellow;
+        border-color: #f4c430;
       }
 
       .name {
-        margin-top: 15px;
-        font-size: 20px;
+        margin-top: 18px;
+        font-size: 22px;
         font-weight: bold;
       }
 
-      .number {
-        font-size: 14px;
-        opacity: 0.8;
+      .role {
         margin-top: 4px;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        opacity: 0.85;
+      }
+
+      .divider {
+        height: 1px;
+        background: rgba(255, 255, 255, 0.25);
+        margin: 22px 0;
+      }
+
+      .info {
+        font-size: 15px;
+        margin-bottom: 10px;
+        opacity: 0.9;
+      }
+
+      .info span {
+        font-weight: bold;
+        color: #f4c430;
+      }
+
+      .edit-btn {
+        display: inline-block;
+        margin-top: 18px;
+        padding: 12px 22px;
+        background: linear-gradient(135deg, #f4c430, #ffdd66);
+        color: #000;
+        text-decoration: none;
+        border-radius: 10px;
+        font-weight: bold;
+        transition: 0.25s;
+      }
+
+      .edit-btn:hover {
+        transform: scale(1.07);
+        box-shadow: 0 0 18px rgba(244, 196, 48, 0.9);
       }
     </style>
   </head>
 
   <body>
     <div class="profile-card">
-      <div class="avatar {{ profile.role }}">
-        {% if profile.profile_image %}
-        <img src="{{ profile.profile_image.url }}" />
+      <!-- Avatar -->
+      <div class="avatar {{ profile.role|upper }}">
+        {% if profile.image %}
+        <img src="{{ profile.image.url }}" alt="Profile Picture" />
         {% else %}
-        <img src="/static/default-avatar.png" />
+        <img src="{% static 'default-avatar.png' %}" alt="Default Avatar" />
         {% endif %}
       </div>
 
+      <!-- Name & Role -->
       <div class="name">
-        {{ profile.user.get_full_name|default:profile.user.username }} - {{
-        profile.role|lower }}
+        {{ profile.user.get_full_name|default:profile.user.username }}
       </div>
+      <div class="role">{{ profile.role }}</div>
 
-      {% if profile.role == "STUDENT" and profile.student_number %}
-      <div class="number">NO-{{ profile.student_number }}</div>
+      <div class="divider"></div>
+
+      <!-- Info -->
+      {% if profile.phone %}
+      <div class="info">📞 Phone: <span>{{ profile.phone }}</span></div>
+      {% endif %} {% if profile.bio %}
+      <div class="info">📝 Bio: <span>{{ profile.bio }}</span></div>
+      {% endif %} {% if profile.role == "STUDENT" and profile.student_number %}
+      <div class="info">
+        🎓 Student No: <span>{{ profile.student_number }}</span>
+      </div>
       {% endif %}
     </div>
   </body>

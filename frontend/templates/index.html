@@ -102,32 +102,36 @@
       }
 
       .nav-item {
-        background: #0b3c7d;
-        color: white;
-        padding: 16px;
-        border-radius: 10px;
+        background: linear-gradient(
+          135deg,
+          rgba(11, 60, 125, 0.55),
+          rgba(244, 196, 48, 0.25)
+        );
+        color: rgb(45, 17, 202);
+        padding: 16px; /* unchanged */
+        border-radius: 10px; /* unchanged */
         text-decoration: none;
         font-weight: bold;
         text-align: center;
         transition: 0.25s;
+
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.15),
+          0 8px 20px rgba(0, 0, 0, 0.25);
       }
 
       .nav-item:hover {
-        transform: scale(1.08);
-        box-shadow: 0 0 15px rgba(244, 196, 48, 0.9);
-      }
-
-      /* ---------- RIGHT SIDE ---------- */
-      .right-panel {
-        margin-left: auto;
-        display: flex;
-        align-items: center;
-        padding-top: 60px;
+        transform: scale(1.08); /* unchanged */
+        box-shadow: inset 0 0 16px rgba(255, 255, 255, 0.25),
+          0 0 18px rgba(10, 30, 214, 0.9);
       }
 
       .staff-dashboard {
         background: #000;
-        color: white;
+        color: rgb(236, 221, 9);
         padding: 16px 26px;
         border-radius: 10px;
         text-decoration: none;
@@ -142,7 +146,14 @@
 
       .staff-dashboard:hover {
         transform: scale(1.08);
-        box-shadow: 0 0 18px rgba(220, 53, 69, 0.9);
+        box-shadow: 0 0 18px rgba(238, 215, 5, 0.9);
+      }
+      /* ---------- FIXED STAFF DASHBOARD ---------- */
+      .fixed-staff-dashboard {
+        position: fixed;
+        top: 415px; /* ~1 inch below top bar */
+        right: 5px;
+        z-index: 9;
       }
 
       /* ---------- AUTH ---------- */
@@ -179,6 +190,163 @@
         align-items: center;
         gap: 6px;
       }
+      /* ---------- GLASS CALENDAR ---------- */
+      .calendar-box {
+        position: fixed;
+        top: 150px; /* below top bar + time */
+        left: 50%;
+        transform: translateX(-50%);
+        width: 320px;
+        background: linear-gradient(
+          135deg,
+          rgba(173, 216, 230, 0.45),
+          rgba(244, 196, 48, 0.35)
+        );
+        backdrop-filter: blur(12px);
+        border-radius: 18px;
+        padding: 18px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        z-index: 8;
+        color: #0b3c7d;
+      }
+
+      .calendar-header {
+        text-align: center;
+        font-weight: bold;
+        font-size: 18px;
+        margin-bottom: 10px;
+      }
+
+      .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 6px;
+        text-align: center;
+      }
+
+      .calendar-day {
+        font-size: 12px;
+        opacity: 0.7;
+      }
+
+      .calendar-date {
+        padding: 8px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.2s;
+      }
+
+      .calendar-date:hover {
+        background: rgba(255, 255, 255, 0.4);
+      }
+
+      .calendar-today {
+        background: #0b3c7d;
+        color: white;
+      }
+      /* ---------- WEATHER GLASS BOX ---------- */
+      .weather-box {
+        position: fixed;
+        top: 110px; /* ABOVE calendar */
+        left: 90%;
+        transform: translateX(-50%);
+        width: 150px;
+        background: linear-gradient(
+          135deg,
+          rgba(173, 216, 230, 0.45),
+          rgba(244, 196, 48, 0.35)
+        );
+        backdrop-filter: blur(14px);
+        border-radius: 22px;
+        padding: 18px 20px;
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+        z-index: 9;
+        color: #0b3c7d;
+      }
+
+      /* TOP ROW */
+      .weather-main {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      /* TEMP */
+      .weather-temp {
+        font-size: 42px;
+        font-weight: bold;
+      }
+
+      /* ICON */
+      .weather-icon {
+        font-size: 46px;
+        animation: float 3s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-6px);
+        }
+        100% {
+          transform: translateY(0);
+        }
+      }
+
+      /* DROPDOWN */
+      .weather-details {
+        margin-top: 12px;
+        display: none;
+        font-size: 14px;
+      }
+
+      .weather-details div {
+        display: flex;
+        justify-content: space-between;
+        padding: 4px 0;
+      }
+
+      .weather-toggle {
+        margin-top: 8px;
+        text-align: center;
+        font-size: 13px;
+        cursor: pointer;
+        font-weight: bold;
+        color: #0b3c7d;
+      }
+
+      /* ---------- TOP PROFILE ---------- */
+      .top-profile {
+        margin-left: auto;
+        margin-right: 25px;
+      }
+
+      .top-profile a {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        color: white;
+        font-size: 12px;
+      }
+
+      .top-profile img {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(6px);
+        background: rgba(255, 255, 255, 0.15);
+      }
+
+      .top-profile span {
+        margin-top: 4px;
+        opacity: 0.9;
+      }
     </style>
   </head>
 
@@ -201,10 +369,38 @@
         <span id="zulu-time">--:--:-- Z</span>
       </div>
 
-      <!-- PROFILE ICON FAR-RIGHT -->
-      <div class="profile-icon">
-        <img src="{% static 'profile-placeholder.png' %}" alt="Profile" />
+      <!-- PROFILE ICON -->
+      <div class="top-profile">
+        <a href="{% url 'accounts:profile' %}">
+          <img src="{{ request.user.profile.image.url }}" alt="Profile" />
+          <span>Profile</span>
+        </a>
       </div>
+    </div>
+    <div class="weather-box">
+      <div class="weather-main">
+        <div class="weather-temp" id="weather-temp">--°</div>
+        <div class="weather-icon" id="weather-icon">☀️</div>
+      </div>
+
+      <div class="weather-toggle" onclick="toggleWeatherDetails()">
+        Details ▾
+      </div>
+
+      <div class="weather-details" id="weather-details">
+        <div><span>High / Low</span><span id="hl">-- / --</span></div>
+        <div><span>Wind</span><span id="wind">--</span></div>
+        <div><span>Humidity</span><span id="humidity">--</span></div>
+        <div><span>Dew Point</span><span id="dew">--</span></div>
+        <div><span>Pressure</span><span id="pressure">--</span></div>
+        <div><span>UV Index</span><span id="uv">--</span></div>
+        <div><span>Visibility</span><span id="visibility">--</span></div>
+      </div>
+    </div>
+
+    <div class="calendar-box">
+      <div class="calendar-header" id="calendar-title">Calendar</div>
+      <div class="calendar-grid" id="calendar-grid"></div>
     </div>
 
     {% if not request.user.is_authenticated %}
@@ -236,11 +432,11 @@
         {% endif %}
       </div>
 
-      <div class="right-panel">
-        {% if request.user.role != "student" and request.user.is_approved %}
+      {% if request.user.role != "student" and request.user.is_approved %}
+      <div class="fixed-staff-dashboard">
         <a href="/dashboard/" class="staff-dashboard">Staff Dashboard</a>
-        {% endif %}
       </div>
+      {% endif %}
     </div>
 
     {% if not request.user.is_approved %}
@@ -281,6 +477,113 @@
 
       setInterval(updateTimes, 1000);
       updateTimes();
+
+      function buildCalendar() {
+        const grid = document.getElementById("calendar-grid");
+        const title = document.getElementById("calendar-title");
+
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth();
+
+        title.textContent = now.toLocaleDateString("en-US", {
+          month: "long",
+          year: "numeric",
+        });
+
+        grid.innerHTML = "";
+
+        const days = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"];
+        days.forEach((d) => {
+          const el = document.createElement("div");
+          el.className = "calendar-day";
+          el.textContent = d;
+          grid.appendChild(el);
+        });
+
+        const firstDay = new Date(year, month, 1).getDay();
+        const totalDays = new Date(year, month + 1, 0).getDate();
+
+        for (let i = 0; i < firstDay; i++) {
+          grid.appendChild(document.createElement("div"));
+        }
+
+        for (let d = 1; d <= totalDays; d++) {
+          const cell = document.createElement("div");
+          cell.className = "calendar-date";
+          cell.textContent = d;
+
+          if (
+            d === now.getDate() &&
+            month === now.getMonth() &&
+            year === now.getFullYear()
+          ) {
+            cell.classList.add("calendar-today");
+          }
+
+          grid.appendChild(cell);
+        }
+      }
+
+      buildCalendar();
+
+      function toggleWeatherDetails() {
+        const el = document.getElementById("weather-details");
+        el.style.display = el.style.display === "block" ? "none" : "block";
+      }
+
+      async function loadWeather() {
+        // Nairobi example — later we auto-detect
+        const lat = -1.2921;
+        const lon = 36.8219;
+
+        const url =
+          `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
+          `&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code,pressure_msl,visibility,dew_point_2m` +
+          `&daily=temperature_2m_max,temperature_2m_min,uv_index_max&timezone=auto`;
+
+        const res = await fetch(url);
+        const data = await res.json();
+
+        const temp = Math.round(data.current.temperature_2m);
+        document.getElementById("weather-temp").textContent = temp + "°";
+
+        document.getElementById("hl").textContent =
+          Math.round(data.daily.temperature_2m_max[0]) +
+          "° / " +
+          Math.round(data.daily.temperature_2m_min[0]) +
+          "°";
+
+        document.getElementById("wind").textContent =
+          data.current.wind_speed_10m + " km/h";
+
+        document.getElementById("humidity").textContent =
+          data.current.relative_humidity_2m + "%";
+
+        document.getElementById("dew").textContent =
+          Math.round(data.current.dew_point_2m) + "°";
+
+        document.getElementById("pressure").textContent =
+          Math.round(data.current.pressure_msl) + " hPa";
+
+        document.getElementById("uv").textContent = data.daily.uv_index_max[0];
+
+        document.getElementById("visibility").textContent =
+          Math.round(data.current.visibility / 1000) + " km";
+
+        // ICON LOGIC
+        const hour = new Date().getHours();
+        const code = data.current.weather_code;
+        let icon = "☀️";
+
+        if (hour >= 18 || hour <= 5) icon = "🌙";
+        if (code > 2 && code < 60) icon = "☁️";
+        if (code >= 60) icon = "🌧️";
+
+        document.getElementById("weather-icon").textContent = icon;
+      }
+
+      loadWeather();
     </script>
   </body>
 </html>
