@@ -347,6 +347,19 @@
         margin-top: 4px;
         opacity: 0.9;
       }
+      /* LOGOUT BUTTON (TOP BAR) */
+      .logout-wrapper {
+        position: relative;
+        z-index: 99999;
+      }
+
+      .logout-text {
+        color: red;
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: 600;
+        pointer-events: auto;
+      }
     </style>
   </head>
 
@@ -374,6 +387,9 @@
         <a href="{% url 'accounts:profile' %}">
           <img src="{{ request.user.profile.image.url }}" alt="Profile" />
           <span>Profile</span>
+        </a>
+        <a href="/accounts/logout/" style="color: red; text-decoration: none">
+          Logout
         </a>
       </div>
     </div>
@@ -584,6 +600,12 @@
       }
 
       loadWeather();
+
+      document
+        .querySelector(".logout-text")
+        .addEventListener("click", function (e) {
+          e.stopPropagation();
+        });
     </script>
   </body>
 </html>

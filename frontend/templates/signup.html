@@ -7,7 +7,7 @@
     <style>
       body {
         margin: 0;
-        height: 100vh;
+        min-height: 100vh;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -16,7 +16,7 @@
       }
 
       .glass-box {
-        width: 380px;
+        width: 420px;
         padding: 35px;
         border-radius: 18px;
         background: rgba(255, 255, 255, 0.12);
@@ -30,14 +30,20 @@
         margin-bottom: 25px;
       }
 
-      input {
+      input,
+      select {
         width: 100%;
         padding: 12px;
-        margin-bottom: 15px;
+        margin-bottom: 14px;
         border-radius: 8px;
         border: none;
         background: rgba(255, 255, 255, 0.2);
         color: white;
+        font-size: 14px;
+      }
+
+      select option {
+        color: black;
       }
 
       button {
@@ -48,6 +54,14 @@
         border-radius: 8px;
         font-weight: bold;
         cursor: pointer;
+        margin-top: 10px;
+      }
+
+      .note {
+        margin-top: 18px;
+        font-size: 13px;
+        text-align: center;
+        opacity: 0.85;
       }
 
       .link {
@@ -69,22 +83,51 @@
 
       <form method="post">
         {% csrf_token %}
+
         <input type="text" name="username" placeholder="Username" required />
-        <input type="email" name="email" placeholder="Email" required />
+        <input type="email" name="email" placeholder="Email Address" required />
+        <input type="text" name="phone" placeholder="Phone Number" required />
+
+        <select name="nationality" required>
+          <option value="">Select Nationality</option>
+          <option value="KE">🇰🇪 Kenya</option>
+          <option value="SD">🇸🇩 Sudan</option>
+          <option value="SA">🇸🇦 Saudi Arabia</option>
+          <option value="EG">🇪🇬 Egypt</option>
+          <option value="AE">🇦🇪 UAE</option>
+        </select>
+
+        <select name="profession" required>
+          <option value="">Select Profession</option>
+          <option value="MANAGEMENT">Management</option>
+          <option value="STAFF">Staff</option>
+          <option value="INSTRUCTOR">Instructor</option>
+          <option value="STUDENT">Student Pilot</option>
+        </select>
+
         <input
           type="password"
-          name="password"
+          name="password1"
           placeholder="Password"
           required
         />
-        <button type="submit">Create Account</button>
+
+        <input
+          type="password"
+          name="password2"
+          placeholder="Confirm Password"
+          required
+        />
+
+        <button type="submit">Register</button>
       </form>
 
+      <div class="note">
+        Your account will be pending approval by Admin or Management.
+      </div>
+
       <div class="link">
-        <p>
-          Already have an account?
-          <a href="{% url 'accounts:login' %}">Login</a>
-        </p>
+        <a href="{% url 'accounts:login' %}">Back to Login</a>
       </div>
     </div>
   </body>
