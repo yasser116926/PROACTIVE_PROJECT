@@ -25,32 +25,6 @@ def can_access_flights(user):
 def can_access_notams(user):
     return can_access_flights(user)
 
-from rest_framework.permissions import BasePermission
-from .models import FlightAccess
 
 
-class HasFlightAccess(BasePermission):
-    def has_permission(self, request, view):
-        user = request.user
 
-        # Full access roles
-        if user.role in ["admin", "management", "instructor"]:
-            return True
-
-        # Students must be approved
-        if user.role == "student":
-            return FlightAccess.objects.filter(
-                student=user,
-                approved=True
-            ).exists()
-
-        return False
-from rest_framework.exceptions import PermissionDenied
-def check_flight_access(user):
-    if user.role == "student":
-        if not hasattr(user, "flight_access"):
-            raise PermissionDenied("Flight access not approved")
-
-        if not user.flight_access.approved:
-            raise PermissionDenied("Flight access not approved")
-    return True

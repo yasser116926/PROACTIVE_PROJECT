@@ -103,7 +103,9 @@
         </a>
         <a class="btn" href="/dashboard/posts/add/">➕ Create Post</a>
         <a class="btn" href="/dashboard/flights/">➕ Manage Flights</a>
-        <a class="btn" href="{% url 'instructor-vcr' %}"> ➕ Start VCR </a>
+        <a class="btn" href="{% url 'dashboard:instructor-vcr' %}">
+          ➕ Start VCR
+        </a>
 
         {% if request.user.is_staff %}
         <a class="btn approve" href="{% url 'accounts:approve' %}">

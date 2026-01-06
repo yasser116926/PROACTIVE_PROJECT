@@ -2,9 +2,12 @@ from django.urls import path
 from . import views
 from gallery.views import GalleryUploadView
 from flights.views import dashboard_flights
+from .views import dashboard_view
+
+app_name= "dashboard"
 
 urlpatterns = [
-    path('', views.dashboard_home, name='dashboard-home'),
+    path('', views.dashboard_home, name='home'),
     path('post-news/', views.post_news_view, name='post-news'),
     path('create-class/', views.create_class, name='create-class'),
     path('create-event/', views.create_event, name='create-event'),
@@ -14,7 +17,7 @@ urlpatterns = [
     path("posts/add/", views.post_create_view, name="dashboard-post-add"),
     path("flights/", dashboard_flights, name="dashboard-flights"),
     path('vcr/',views.instructor_vcr_view, name='instructor-vcr'),
-    
+
 
 
 

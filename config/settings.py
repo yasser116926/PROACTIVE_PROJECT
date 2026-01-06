@@ -160,7 +160,7 @@ REST_FRAMEWORK = {
 # https://docs.djangoproject.com/en/6.0/ref/settings/#default-auto-field
 LOGIN_URL = '/accounts/login/'  # this will be your dashboard login page
 LOGIN_REDIRECT_URL = '/'  # after login, go to dashboard home
-  # <-- must be a valid URL path
+LOGOUT_REDIRECT_URL = '/accounts/login/' # <-- must be a valid URL path
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'

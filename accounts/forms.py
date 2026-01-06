@@ -1,13 +1,14 @@
 from django import forms
 from .models import User
 
-class SignupForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput)
-    role = forms.ChoiceField(choices=User.ROLE_CHOICES)
 
+class SignupForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ["username", "email", "password", "role"]
+        fields = ["username", "email", "password"]
+
+    password = forms.CharField(widget=forms.PasswordInput)
+
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -19,11 +20,3 @@ class SignupForm(forms.ModelForm):
         return user
 
 
-# accounts/forms.py
-from django import forms
-from .models import Profile
-
-class ProfileForm(forms.ModelForm):
-    class Meta:
-        model = Profile
-        fields = ['image', 'phone', 'bio']

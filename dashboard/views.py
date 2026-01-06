@@ -1,24 +1,41 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
-
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
+from accounts.utils import can_access_dashboard
 # =========================================================
 # ACCESS CONTROL (SINGLE SOURCE OF TRUTH)
 # =========================================================
 
 def can_access_dashboard(user):
-    return (
-        user.is_authenticated
-        and user.is_approved
-        and user.role in ["admin", "management", "instructor"]
-    )
+    if not user.is_authenticated:
+        return False
+
+    # Superusers always allowed
+    if user.is_superuser:
+        return True
+
+    # Allowed staff roles
+    if user.system_role in ["admin", "management", "staff", "instructor"]:
+        return user.is_approved
+
+    return False
+
+
+@login_required
+@user_passes_test(can_access_dashboard)
+def dashboard_view(request):
+    return render(request,"dashboard/home.html")
 
 # =========================================================
 # DASHBOARD HOME
 # =========================================================
 
+@login_required
 @user_passes_test(can_access_dashboard)
 def dashboard_home(request):
     return render(request, "dashboard/home.html")
+
 
 # =========================================================
 # NEWS
@@ -167,3 +184,10 @@ def instructor_vcr_view(request):
         "dashboard/vcr.html",
         {"session": session}
     )
+
+
+
+
+
+
+

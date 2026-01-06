@@ -1,38 +1,68 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
     <title>Account Approvals</title>
+
     <style>
       body {
-        background: #0e0e0e;
+        background: linear-gradient(135deg, #0b3c7d, #000);
+        font-family: Arial, sans-serif;
         color: white;
-        font-family: Arial;
         padding: 40px;
       }
 
-      table {
-        width: 100%;
-        border-collapse: collapse;
+      h2 {
+        text-align: center;
+        margin-bottom: 30px;
       }
 
-      th,
-      td {
-        padding: 10px;
-        border-bottom: 1px solid #333;
+      .card {
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(14px);
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      }
+
+      label {
+        display: block;
+        margin-top: 12px;
+        font-size: 14px;
+        opacity: 0.85;
       }
 
       select,
-      button {
-        background: #1c1c1c;
-        color: white;
+      input {
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
         border: none;
-        padding: 6px;
+        margin-top: 5px;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
       }
 
       button {
-        background: #4caf50;
-        color: black;
+        margin-top: 18px;
+        width: 100%;
+        padding: 12px;
+        border-radius: 10px;
+        border: none;
+        background: #f4c430;
         font-weight: bold;
+        cursor: pointer;
+      }
+
+      .username {
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      .email {
+        font-size: 13px;
+        opacity: 0.7;
       }
     </style>
   </head>
@@ -40,46 +70,57 @@
   <body>
     <h2>Pending Account Approvals</h2>
 
-    <table>
-      <tr>
-        <th>User</th>
-        <th>Role</th>
-        <th>Flights</th>
-        <th>Action</th>
-      </tr>
+    {% for user in pending_users %}
+    <div class="card">
+      <div class="username">{{ user.username }}</div>
+      <div class="email">{{ user.email }}</div>
 
-      {% for p in profiles %}
-      <tr>
-        <form method="post">
-          {% csrf_token %}
-          <td>{{ p.user.username }}</td>
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="user_id" value="{{ user.id }}" />
 
-          <td>
-            <select name="role">
-              <option value="STUDENT">Student</option>
-              <option value="INSTRUCTOR">Instructor</option>
-              <option value="MANAGEMENT">Management</option>
-              {% if request.user.profile.role == "ADMIN" %}
-              <option value="ADMIN">Admin</option>
-              {% endif %}
-            </select>
-          </td>
+        <!-- PROFESSION -->
+        <label>Profession</label>
+        <select name="profession" required>
+          <option value="">Select</option>
+          <option value="management">Management</option>
+          <option value="staff">Staff</option>
+          <option value="instructor">Instructor</option>
+          <option value="student_pilot">Student Pilot</option>
+        </select>
 
-          <td>
-            <input type="checkbox" name="can_access_flights" />
-          </td>
+        <!-- SPECIALIZATION -->
+        <label>Role / Specialization</label>
+        <select name="specialization" required>
+          <option value="">Select</option>
 
-          <td>
-            <input type="hidden" name="profile_id" value="{{ p.id }}" />
-            <button type="submit">Approve</button>
-          </td>
-        </form>
-      </tr>
-      {% empty %}
-      <tr>
-        <td colspan="4">No pending accounts</td>
-      </tr>
-      {% endfor %}
-    </table>
+          <!-- management -->
+          <option value="administrator">Administrator</option>
+          <option value="accountant">Accountant</option>
+          <option value="chief">Chief</option>
+
+          <!-- staff -->
+          <option value="reception">Reception</option>
+          <option value="dispatch">Flight Dispatch</option>
+          <option value="technician">Technician</option>
+
+          <!-- student -->
+          <option value="ppl">PPL</option>
+          <option value="cpl">CPL</option>
+          <option value="atpl">ATPL</option>
+          <option value="ir">Multi / IR</option>
+          <option value="conversion">License Conversion</option>
+        </select>
+
+        <!-- STUDENT NUMBER -->
+        <label>Student Number (only for students)</label>
+        <input type="text" name="student_number" placeholder="PR123456" />
+
+        <button type="submit">Approve Account</button>
+      </form>
+    </div>
+    {% empty %}
+    <p style="text-align: center; opacity: 0.7">No pending accounts 🎉</p>
+    {% endfor %}
   </body>
 </html>

@@ -1,14 +1,17 @@
-# accounts/utils.py
+def can_access_dashboard(user):
+    if not user.is_authenticated:
+        return False
 
-def can_approve(approver_profile, target_role):
+    if not user.is_approved:
+        return False
 
-    if approver_profile.role == 'ADMIN':
+    # SYSTEM LEVEL
+    if user.system_role in ["admin", "management"]:
         return True
 
-    if approver_profile.role == 'MANAGEMENT':
-        return target_role in ['INSTRUCTOR', 'STUDENT']
-
-    if approver_profile.role == 'INSTRUCTOR':
-        return target_role == 'STUDENT'
+    # PROFILE LEVEL
+    if hasattr(user, "profile"):
+        if user.profile.profession in ["staff", "instructor"]:
+            return True
 
     return False

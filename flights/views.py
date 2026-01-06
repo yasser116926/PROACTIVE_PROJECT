@@ -90,27 +90,7 @@ def check_flight_access(user):
             raise PermissionDenied("Flight access not approved")
     return True
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from accounts.models import FlightAccess
-from accounts.permissions import HasFlightAccess
-class FlightApprovalList(APIView):
-    permission_classes = [IsAuthenticated, HasFlightAccess]
 
-    def get(self, request):
-        if request.user.profile.role not in ["ADMIN", "MANAGEMENT", "INSTRUCTOR"]:
-            return HttpResponseForbidden()
-
-        pending_requests = FlightAccess.objects.filter(approved=False)
-        data = [
-            {
-                "student_id": fa.student.id,
-                "student_username": fa.student.user.username,
-                "requested_at": fa.requested_at,
-            }
-            for fa in pending_requests
-        ]
-        return Response(data)
 
 @login_required
 def flights_view(request):

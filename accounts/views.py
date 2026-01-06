@@ -3,13 +3,24 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import HttpResponseForbidden
-from .models import User, FlightAccess
 from .forms import SignupForm
 from django.utils import timezone
 
 # Utility
 def is_admin_or_management(user):
-    return user.role in ["admin", "management"]
+    if not user.is_authenticated:
+        return False
+
+    # Superusers always allowed
+    if user.is_superuser:
+        return True
+
+    # Allowed admin, management roles
+    if user.system_role in ["admin", "management"]:
+        return user.is_approved
+
+    return False
+
 
 
 
@@ -66,7 +77,7 @@ def approve_users(request):
         target = get_object_or_404(User, id=user_id)
 
         target.is_approved = True
-        target.role = role
+        target.system_role = role
         target.save()
 
         messages.success(request, f"{target.username} approved as {role}")
@@ -78,43 +89,18 @@ def approve_users(request):
         {"pending_users": pending_users}
     )
 
-
-# Flight approvals API
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-
-class FlightApprovalList(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        if request.user.role not in ["admin", "management", "instructor"]:
-            return Response({"detail": "Not allowed"}, status=403)
-        approvals = FlightAccess.objects.select_related("student")
-        data = [{"student": fa.student.username, "approved": fa.approved} for fa in approvals]
-        return Response(data)
-
-class ApproveFlight(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, student_id):
-        if request.user.role not in ["admin", "management", "instructor"]:
-            return Response({"detail": "Not allowed"}, status=403)
-        access = get_object_or_404(FlightAccess, student_id=student_id)
-        access.approved = True
-        access.approved_by = request.user
-        access.approved_at = timezone.now()
-        access.save()
-        return Response({"status": "approved"})
-
+   
 from rest_framework import viewsets
 from .serializers import UserSerializer
+from .models import User
+from rest_framework.permissions import IsAuthenticated
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]  
     def get_queryset(self):
-        if self.request.user.role in ["admin", "management"]:
+        if self.request.user.system_role in ["admin", "management"]:
             return User.objects.all()
         return User.objects.filter(id=self.request.user.id)
 
@@ -132,8 +118,6 @@ def pending_approval(request):
 # accounts/views.py
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from .models import Profile
-from .forms import ProfileForm
 
 
 @login_required
@@ -160,6 +144,6 @@ from django.shortcuts import redirect
 
 def logout_view(request):
     logout(request)
-    return redirect("accounts:login")  # or your index view name
+    return redirect("accounts:login")  
 
        
