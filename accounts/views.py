@@ -3,8 +3,13 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import HttpResponseForbidden
-from .forms import SignupForm
 from django.utils import timezone
+from .forms import SignupForm, ProfileForm
+
+from django import forms
+from .models import Profile
+
+
 
 # Utility
 def is_admin_or_management(user):
@@ -17,14 +22,14 @@ def is_admin_or_management(user):
 
     # Allowed admin, management roles
     if user.system_role in ["admin", "management"]:
-        return user.is_approved
+        return True
 
     return False
 
 
 
 
-# Login
+# Login view logic
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
@@ -43,6 +48,8 @@ def login_view(request):
 
     return render(request, "login.html")
 
+
+# signup view logic
 
 def signup_view(request):
     if request.method == "POST":
@@ -64,7 +71,29 @@ def signup_view(request):
 
 
 
-# Approve users (admin/management)
+
+import random
+
+
+
+
+# =====================================================
+# STUDENT NUMBER GENERATOR (UNIQUE)
+# =====================================================
+
+def generate_student_number():
+    while True:
+        number = f"PR{random.randint(100000, 999999)}"
+        if not User.objects.filter(student_number=number).exists():
+            return number
+
+
+# =====================================================
+# APPROVAL DASHBOARD
+# =====================================================
+
+from .models import Profile, AccountApprovalLog
+
 @login_required
 @user_passes_test(is_admin_or_management)
 def approve_users(request):
@@ -72,24 +101,72 @@ def approve_users(request):
 
     if request.method == "POST":
         user_id = request.POST.get("user_id")
-        role = request.POST.get("role")
+        profession = request.POST.get("profession")
+        specialization = request.POST.get("specialization")
 
-        target = get_object_or_404(User, id=user_id)
+        user = get_object_or_404(User, id=user_id)
 
-        target.is_approved = True
-        target.system_role = role
-        target.save()
+        # Approve user
+        user.is_approved = True
+        user.system_role = profession
+        user.save()
 
-        messages.success(request, f"{target.username} approved as {role}")
+        # Create / update profile
+        profile, _ = Profile.objects.get_or_create(user=user)
+        profile.specialization = specialization
+
+        if profession == "student":
+            profile.student_number = generate_student_number()
+        else:
+            profile.student_number = None
+
+        profile.save()
+
+        # Log approval
+        AccountApprovalLog.objects.update_or_create(
+            user=user, defaults={"approved_at": timezone.now(), "approved_by": request.user}
+        )
+
+        messages.success(request, f"{user.username} approved successfully")
         return redirect("accounts:approve")
 
-    return render(
-        request,
-        "accounts/approve_accounts.html",
-        {"pending_users": pending_users}
-    )
+    return render(request, "accounts/approve_accounts.html", {"pending_users": pending_users})
 
-   
+
+#active accounts view logic
+
+
+@login_required
+@user_passes_test(is_admin_or_management)
+def active_accounts(request):
+    active_users = User.objects.filter(is_approved=True)
+    return render(request, "accounts/active_accounts.html", {"active_users": active_users})
+
+#suspend user logic
+
+@login_required
+@user_passes_test(is_admin_or_management)
+def suspend_user(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    user.status = "suspended"
+    user.save()
+    return redirect("accounts:active_accounts")
+
+
+#delete user logic
+
+@login_required
+@user_passes_test(is_admin_or_management)
+def delete_user(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    user.delete()
+    return redirect("accounts:active_accounts")
+
+
+
+
+#user view logic   
+
 from rest_framework import viewsets
 from .serializers import UserSerializer
 from .models import User
@@ -110,37 +187,43 @@ class UserViewSet(viewsets.ModelViewSet):
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
+#pending approval view logic
+
 @login_required
 def pending_approval(request):
     return render(request, "accounts/pending.html")
 
 
-# accounts/views.py
+#profile view logic
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from .models import User, Profile
 
 
 @login_required
 def profile_view(request):
-    profile, created = Profile.objects.get_or_create(
-        user=request.user
-    )
+    profile, _ = Profile.objects.get_or_create(user=request.user)
 
     if request.method == "POST":
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
-            return redirect('accounts:profile')
+            return redirect("accounts:profile")
     else:
         form = ProfileForm(instance=profile)
 
-    return render(request, 'accounts/profile.html', {
-        'profile': profile,
-        'form': form,
+    return render(request, "accounts/profile.html", {
+        "profile": profile,
+        "form": form
     })
+
+
+
 
 from django.contrib.auth import logout
 from django.shortcuts import redirect
+
+#logout view logic
 
 def logout_view(request):
     logout(request)

@@ -3,7 +3,7 @@ from django.db import models
 class Flight(models.Model):
     AIRCRAFT_CHOICES = [
         ("5Y-CCZ", "5Y-CCZ"),
-        ("5Y-PZO", "5Y-PZO"),
+        ("5Y-BZO", "5Y-BZO"),
         ("FMX", "FMX"),
     ]
 

@@ -9,10 +9,10 @@ class UserAdmin(BaseUserAdmin):
         "username",
         "email",
         "system_role",
-        "is_active",
         "is_approved",
         "is_staff",
     )
+
     list_filter = (
         "system_role",
         "is_approved",
@@ -20,6 +20,7 @@ class UserAdmin(BaseUserAdmin):
         "is_superuser",
         "is_active",
     )
+
     search_fields = ("username", "email")
     ordering = ("username",)
 
@@ -28,9 +29,11 @@ class UserAdmin(BaseUserAdmin):
 class ProfileAdmin(admin.ModelAdmin):
     list_display = (
         "user",
-        "profession",
         "specialization",
         "student_number",
-        "approved",
     )
-    list_filter = ("profession", "approved")
+
+    search_fields = (
+        "user__username",
+        "student_number",
+    )

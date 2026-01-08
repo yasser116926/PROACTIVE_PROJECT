@@ -81,6 +81,8 @@ urlpatterns = [
     path("notam/", include("notam.urls")),
     path("school/", include("school.urls")),
     path("accounts/", include("accounts.urls")),
+    path("accounts/", include("django.contrib.auth.urls")),
+
     
 
 

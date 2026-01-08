@@ -15,7 +15,7 @@ def flights_dashboard_api(request):
         },
         "flights": {
             "5Y-CCZ": [],
-            "5Y-PZO": [],
+            "5Y-BZO": [],
             "FMX": [],
         }
     }

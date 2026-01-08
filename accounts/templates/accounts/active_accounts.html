@@ -1,0 +1,28 @@
+<h2>Active Accounts</h2>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Role</th>
+    <th>Specialization</th>
+    <th>Student No</th>
+    <th>Approved At</th>
+    <th>Status</th>
+    <th>Actions</th>
+  </tr>
+
+  {% for u in active_users %}
+  <tr>
+    <td>{{ u.username }}</td>
+    <td>{{ u.system_role }}</td>
+    <td>{{ u.profile.specialization }}</td>
+    <td>{{ u.profile.student_number }}</td>
+    <td>{{ u.accountapprovallog.approved_at }}</td>
+    <td>{{ u.status }}</td>
+    <td>
+      <a href="{% url 'accounts:suspend' u.id %}">Suspend</a> |
+      <a href="{% url 'accounts:delete' u.id %}">Delete</a>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
