@@ -1,9 +1,9 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <title>Sign Up | Proactive Air Service</title>
-
     <style>
       body {
         margin: 0;
@@ -30,11 +30,14 @@
         margin-bottom: 25px;
       }
 
+      .form-field {
+        margin-bottom: 14px;
+      }
+
       input,
       select {
         width: 100%;
         padding: 12px;
-        margin-bottom: 14px;
         border-radius: 8px;
         border: none;
         background: rgba(255, 255, 255, 0.2);
@@ -74,6 +77,14 @@
         text-decoration: none;
         font-weight: bold;
       }
+
+      .errorlist {
+        color: #ff6b6b;
+        font-size: 13px;
+        margin-bottom: 6px;
+        list-style: none;
+        padding-left: 0;
+      }
     </style>
   </head>
 
@@ -82,42 +93,27 @@
       <h2>Create Account</h2>
 
       <form method="post">
-        {% csrf_token %}
+        {% csrf_token %} {{ form.non_field_errors }}
 
-        <input type="text" name="username" placeholder="Username" required />
-        <input type="email" name="email" placeholder="Email Address" required />
-        <input type="text" name="phone" placeholder="Phone Number" required />
+        <div class="form-field">
+          {{ form.username.errors }} {{ form.username }}
+        </div>
 
-        <select name="nationality" required>
-          <option value="">Select Nationality</option>
-          <option value="KE">🇰🇪 Kenya</option>
-          <option value="SD">🇸🇩 Sudan</option>
-          <option value="SA">🇸🇦 Saudi Arabia</option>
-          <option value="EG">🇪🇬 Egypt</option>
-          <option value="AE">🇦🇪 UAE</option>
-        </select>
+        <div class="form-field">{{ form.email.errors }} {{ form.email }}</div>
 
-        <select name="profession" required>
-          <option value="">Select Profession</option>
-          <option value="MANAGEMENT">Management</option>
-          <option value="STAFF">Staff</option>
-          <option value="INSTRUCTOR">Instructor</option>
-          <option value="STUDENT">Student Pilot</option>
-        </select>
+        <div class="form-field">{{ form.phone.errors }} {{ form.phone }}</div>
 
-        <input
-          type="password"
-          name="password1"
-          placeholder="Password"
-          required
-        />
+        <div class="form-field">
+          {{ form.nationality.errors }} {{ form.nationality }}
+        </div>
 
-        <input
-          type="password"
-          name="password2"
-          placeholder="Confirm Password"
-          required
-        />
+        <div class="form-field">
+          {{ form.password1.errors }} {{ form.password1 }}
+        </div>
+
+        <div class="form-field">
+          {{ form.password2.errors }} {{ form.password2 }}
+        </div>
 
         <button type="submit">Register</button>
       </form>

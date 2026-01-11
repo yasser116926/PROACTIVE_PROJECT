@@ -47,19 +47,26 @@
       }
 
       button {
-        padding: 10px 18px;
+        padding: 8px 14px;
         background: #1abc9c;
         border: none;
         color: white;
-        font-size: 14px;
+        font-size: 13px;
         font-weight: bold;
         border-radius: 6px;
         cursor: pointer;
-        margin-top: 10px;
       }
 
       button:hover {
         background: #16a085;
+      }
+
+      .danger {
+        background: #e74c3c;
+      }
+
+      .danger:hover {
+        background: #c0392b;
       }
 
       table {
@@ -89,6 +96,17 @@
         color: #777;
         font-style: italic;
       }
+
+      .actions {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .clear-all {
+        text-align: right;
+        margin-bottom: 10px;
+      }
     </style>
   </head>
 
@@ -110,12 +128,28 @@
       <h3>Current Flights</h3>
 
       {% if flights %}
+
+      <!-- CLEAR ALL FLIGHTS -->
+      <div class="clear-all">
+        <form method="post" action="{% url 'dashboard:clear-flights' %}">
+          {% csrf_token %}
+          <button
+            type="submit"
+            class="danger"
+            onclick="return confirm('Are you sure you want to delete ALL flights?');"
+          >
+            Clear All Flights
+          </button>
+        </form>
+      </div>
+
       <table>
         <tr>
           <th>Aircraft</th>
           <th>Time</th>
           <th>Name</th>
           <th>EX</th>
+          <th>Actions</th>
         </tr>
 
         {% for f in flights %}
@@ -124,13 +158,31 @@
           <td>{{ f.time }}</td>
           <td>{{ f.name }}</td>
           <td>{{ f.ex }}</td>
+          <td>
+            <div class="actions">
+              <form
+                method="post"
+                action="{% url 'dashboard:delete-flight' f.id %}"
+              >
+                {% csrf_token %}
+                <button
+                  type="submit"
+                  class="danger"
+                  onclick="return confirm('Delete this flight?');"
+                >
+                  Delete
+                </button>
+              </form>
+            </div>
+          </td>
         </tr>
         {% empty %}
         <tr>
-          <td colspan="4" class="empty-text">No flights yet</td>
+          <td colspan="5" class="empty-text">No flights yet</td>
         </tr>
         {% endfor %}
       </table>
+
       {% else %}
       <p class="empty-text">No flight data available or database not ready.</p>
       {% endif %}

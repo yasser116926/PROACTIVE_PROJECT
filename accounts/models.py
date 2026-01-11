@@ -6,12 +6,13 @@ from django.utils import timezone
 
 class User(AbstractUser):
     SYSTEM_ROLE_CHOICES = [
-        ("admin", "Admin"),
-        ("management", "Management"),
-        ("staff", "Staff"),
-        ("instructor", "Instructor"),
-        ("student", "Student"),
-    ]
+    ("admin", "Admin"),
+    ("management", "Management"),
+    ("staff", "Staff"),
+    ("instructor", "Instructor"),
+    ("student pilot", "Student Pilot"),
+]
+
 
     system_role = models.CharField(
         max_length=20,

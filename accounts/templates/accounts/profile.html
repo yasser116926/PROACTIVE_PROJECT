@@ -1,41 +1,53 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="UTF-8" />
-    <title>Your Profile</title>
-
+    <title>Profile</title>
     <style>
       body {
-        margin: 0;
-        background: linear-gradient(135deg, #0b3c7d, #000814);
-        font-family: Arial, sans-serif;
-        min-height: 100vh;
+        background: #0f172a;
+        color: white;
+        font-family: Arial;
         display: flex;
         justify-content: center;
-        align-items: center;
-        color: white;
+        padding-top: 120px;
       }
 
-      .profile-card {
-        background: rgba(255, 255, 255, 0.12);
-        backdrop-filter: blur(18px);
-        border-radius: 22px;
-        padding: 35px 45px;
-        width: 430px;
+      .card {
+        width: 420px;
+        background: #1e293b;
+        border-radius: 18px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
         text-align: center;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+      }
+
+      .avatar-wrapper {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 10px;
+        position: relative;
+      }
+
+      .avatar-ring {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        padding: 4px;
+        background: linear-gradient(145deg, #facc15, #facc15);
+        box-shadow: 0 0 15px #facc15aa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       .avatar {
-        width: 160px;
-        height: 160px;
+        width: 140px;
+        height: 140px;
         border-radius: 50%;
-        border: 5px solid #f4c430;
         overflow: hidden;
-        margin: auto;
-        cursor: pointer;
         position: relative;
+        cursor: pointer;
       }
 
       .avatar img {
@@ -45,145 +57,119 @@
         border-radius: 50%;
       }
 
-      input[type="file"] {
-        display: none;
+      .avatar input {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
       }
 
-      h3 {
-        margin-top: 18px;
-        font-size: 22px;
-        font-weight: bold;
+      h2 {
+        margin: 14px 0 4px;
       }
 
-      .role {
+      .subtitle {
         font-size: 14px;
-        letter-spacing: 1px;
         opacity: 0.85;
-        margin-top: 6px;
       }
 
-      .divider {
-        height: 1px;
-        background: rgba(255, 255, 255, 0.25);
-        margin: 22px 0;
+      .student {
+        margin-top: 6px;
+        font-size: 13px;
+        color: #facc15;
       }
 
       details {
-        margin-top: 18px;
+        margin-top: 20px;
+        background: #0f172a;
+        padding: 14px;
+        border-radius: 12px;
         text-align: left;
       }
 
       summary {
         cursor: pointer;
         font-weight: bold;
-        margin-bottom: 12px;
+        text-align: center;
       }
 
-      .info {
+      .row {
+        margin-top: 10px;
         font-size: 14px;
-        margin-bottom: 8px;
       }
 
-      .info span {
-        font-weight: bold;
-        color: #f7f302;
-      }
-
-      input,
-      select {
-        width: 100%;
-        padding: 8px;
-        border-radius: 6px;
-        border: none;
-        margin-top: 4px;
-      }
-
-      button {
-        width: 100%;
-        margin-top: 14px;
-        padding: 10px;
-        background: linear-gradient(135deg, #f4c430, #ffdd66);
-        border: none;
-        border-radius: 8px;
-        font-weight: bold;
-        cursor: pointer;
-      }
-
-      .links {
-        margin-top: 15px;
-      }
-
-      .links a {
-        color: #ffdd66;
+      .actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 18px;
         font-size: 13px;
+      }
+
+      .actions a {
         text-decoration: none;
+        color: #facc15;
+      }
+
+      .logout {
+        color: #ef4444;
+        font-weight: bold;
       }
     </style>
   </head>
 
   <body>
-    <div class="profile-card">
+    <div class="card">
+      <!-- PROFILE PICTURE WITH YELLOW RING -->
       <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-
-        <!-- AVATAR -->
-        <label class="avatar">
-          {% if profile.image %}
-          <img src="{{ profile.image.url }}" alt="Profile Image" />
-          {% else %}
-          <img src="{% static 'default-avatar.png' %}" alt="Default Avatar" />
-          {% endif %}
-          <input type="file" name="image" onchange="this.form.submit()" />
-        </label>
-
-        <!-- NAME -->
-        <h3>{{ request.user.get_full_name|default:request.user.username }}</h3>
-
-        <!-- ROLE + STUDENT NUMBER -->
-        <div class="role">
-          {{ request.user.get_system_role_display|upper }} {% if
-          profile.student_number %} · {{ profile.student_number }}
+        <div class="avatar-wrapper">
+          <div class="avatar-ring">
+            <label class="avatar">
+              {% if profile.image %}
+              <img src="{{ profile.image.url }}" />
+              {% else %}
+              <img src="{% static 'default-avatar.png' %}" />
+              {% endif %}
+              <input type="file" name="image" onchange="this.form.submit()" />
+            </label>
+          </div>
         </div>
-
-        <div class="divider"></div>
-
-        <!-- COLLAPSIBLE INFO -->
-        <details>
-          <summary>More Information</summary>
-
-          <div class="info">Email: <span>{{ request.user.email }}</span></div>
-
-          <div class="info">Phone: {{ form.phone }}</div>
-
-          <div class="info">Nationality: {{ form.nationality }}</div>
-
-          {% if profile.specialization %}
-          <div class="info">
-            Specialization:
-            <span>{{ profile.specialization }}</span>
-          </div>
-          {% endif %}
-
-          <div class="info">
-            Status:
-            <span>{{ request.user.status|upper }}</span>
-          </div>
-
-          {% if request.user.accountapprovallog %}
-          <div class="info">
-            Approved on:
-            <span>
-              {{ request.user.accountapprovallog.approved_at|date:"Y-m-d H:i" }}
-            </span>
-          </div>
-          {% endif %}
-
-          <button type="submit">Save Changes</button>
-        </details>
       </form>
 
-      <div class="links">
+      <!-- NAME -->
+      <h2>{{ request.user.get_full_name|default:request.user.username }}</h2>
+
+      <!-- ROLE & SPECIALIZATION -->
+      <div class="subtitle">
+        {{ request.user.get_system_role_display }} – {{
+        profile.specialization|upper }}
+      </div>
+
+      <!-- STUDENT NUMBER -->
+      {% if profile.student_number %}
+      <div class="student">Student No: {{ profile.student_number }}</div>
+      {% endif %}
+
+      <!-- COLLAPSIBLE INFO -->
+      <details open>
+        <summary>Profile Information</summary>
+
+        <div class="row">Status: {{ request.user.status|upper }}</div>
+        <div class="row">
+          Approved: {{ request.user.accountapprovallog.approved_at|date:"Y-m-d
+          H:i"|default:"—" }}
+        </div>
+        <div class="row">
+          Nationality: {{ profile.nationality|default:"—" }}
+        </div>
+        <div class="row">Email: {{ request.user.email }}</div>
+        <div class="row">Phone: {{ profile.phone|default:"—" }}</div>
+      </details>
+
+      <!-- ACTIONS -->
+      <div class="actions">
         <a href="{% url 'password_change' %}">Change Password</a>
+        <a href="{% url 'accounts:logout' %}" class="logout">Logout</a>
       </div>
     </div>
   </body>

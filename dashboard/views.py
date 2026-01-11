@@ -188,6 +188,26 @@ def instructor_vcr_view(request):
 
 
 
+from django.shortcuts import redirect, get_object_or_404
+from django.contrib.auth.decorators import user_passes_test
+from flights.models import Flight   # adjust import if needed
+
+
+def is_staff(user):
+    return user.is_authenticated and user.is_staff
+
+
+@user_passes_test(is_staff)
+def delete_flight(request, flight_id):
+    flight = get_object_or_404(Flight, id=flight_id)
+    flight.delete()
+    return redirect("dashboard-flights")
+
+
+@user_passes_test(is_staff)
+def clear_flights(request):
+    Flight.objects.all().delete()
+    return redirect("dashboard-flights")
 
 
 

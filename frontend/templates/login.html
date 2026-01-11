@@ -72,6 +72,16 @@
         text-decoration: none;
         font-weight: bold;
       }
+
+      .eye-icon {
+        position: absolute;
+        top: 12px;
+        right: 10px;
+        width: 20px;
+        height: 20px;
+        fill: #f4c430;
+        cursor: pointer;
+      }
     </style>
   </head>
 
@@ -90,14 +100,43 @@
       <form method="post">
         {% csrf_token %}
         <input type="text" name="username" placeholder="Username" required />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          required
-        />
+
+        <div style="position: relative">
+          <input
+            type="password"
+            name="password"
+            id="password"
+            placeholder="Password"
+            required
+          />
+          <svg
+            onclick="togglePassword()"
+            class="eye-icon"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M12 5c-7 0-11 7-11 7s4 7 11 7 11-7 11-7-4-7-11-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"
+            />
+          </svg>
+        </div>
+
+        <div
+          class="link"
+          style="text-align: right; margin-top: -10px; margin-bottom: 10px"
+        >
+          <a href="{% url 'reset_password' %}">Forgot password?</a>
+        </div>
+
         <button type="submit">Login</button>
       </form>
+
+      <script>
+        function togglePassword() {
+          const input = document.getElementById("password");
+          input.type = input.type === "password" ? "text" : "password";
+        }
+      </script>
 
       <div class="link">
         <p>

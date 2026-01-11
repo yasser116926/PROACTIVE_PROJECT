@@ -51,28 +51,19 @@ def login_view(request):
 
 # signup view logic
 
+from .forms import SignupForm
+
 def signup_view(request):
     if request.method == "POST":
-        username = request.POST.get("username")
-        email = request.POST.get("email")
-        password = request.POST.get("password")
-
-        if User.objects.filter(username=username).exists():
-            messages.error(request, "Username already exists")
-        else:
-            User.objects.create_user(
-                username=username,
-                email=email,
-                password=password
-            )
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Account created. Awaiting approval.")
             return redirect("accounts:login")
+    else:
+        form = SignupForm()
 
-    return render(request, "signup.html")
-
-
-
-
-import random
+    return render(request, "signup.html", {"form": form})
 
 
 
@@ -81,11 +72,15 @@ import random
 # STUDENT NUMBER GENERATOR (UNIQUE)
 # =====================================================
 
+import random
+
 def generate_student_number():
     while True:
         number = f"PR{random.randint(100000, 999999)}"
-        if not User.objects.filter(student_number=number).exists():
+        if not Profile.objects.filter(student_number=number).exists():
             return number
+
+
 
 
 # =====================================================
@@ -115,7 +110,9 @@ def approve_users(request):
         profile, _ = Profile.objects.get_or_create(user=user)
         profile.specialization = specialization
 
-        if profession == "student":
+        if profession.lower() == "student pilot":
+
+
             profile.student_number = generate_student_number()
         else:
             profile.student_number = None
@@ -198,24 +195,35 @@ def pending_approval(request):
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from .models import User, Profile
+from .forms import SignupForm, ProfileForm, EmailForm
 
 
 @login_required
 def profile_view(request):
     profile, _ = Profile.objects.get_or_create(user=request.user)
 
+    edit_mode = request.GET.get("edit") == "1"
+
     if request.method == "POST":
-        form = ProfileForm(request.POST, request.FILES, instance=profile)
-        if form.is_valid():
-            form.save()
+        profile_form = ProfileForm(request.POST, request.FILES, instance=profile)
+        email_form = EmailForm(request.POST, instance=request.user)
+
+        if profile_form.is_valid() and email_form.is_valid():
+            profile_form.save()
+            email_form.save()
             return redirect("accounts:profile")
+
     else:
-        form = ProfileForm(instance=profile)
+        profile_form = ProfileForm(instance=profile)
+        email_form = EmailForm(instance=request.user)
 
     return render(request, "accounts/profile.html", {
         "profile": profile,
-        "form": form
+        "profile_form": profile_form,
+        "email_form": email_form,
+        "edit_mode": edit_mode,
     })
+
 
 
 

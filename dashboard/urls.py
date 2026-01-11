@@ -20,5 +20,15 @@ urlpatterns = [
 
 
 
+    path("dashboard/flights/", views.dashboard_flights, name="dashboard-flights"),
+    path("dashboard/flights/delete/<int:flight_id>/", views.delete_flight, name="delete-flight"),
+    path("dashboard/flights/clear/", views.clear_flights, name="clear-flights"),
+
+
+
 
 ]
+
+
+   
+

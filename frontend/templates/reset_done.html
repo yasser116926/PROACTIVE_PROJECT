@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Password Reset Complete</title>
+    <style>
+      body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #0b3c7d, #000);
+        font-family: Arial, sans-serif;
+        color: white;
+      }
+
+      .glass-box {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 30px;
+        border-radius: 18px;
+        text-align: center;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+        width: 380px;
+      }
+
+      a {
+        color: #f4c430;
+        text-decoration: none;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="glass-box">
+      <h2>Password Reset Complete</h2>
+      <p>Your password has been reset successfully.</p>
+      <a href="{% url 'accounts:login' %}">Login Now</a>
+    </div>
+  </body>
+</html>

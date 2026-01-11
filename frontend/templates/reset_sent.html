@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Reset Email Sent</title>
+    <style>
+      body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #0b3c7d, #000);
+        font-family: Arial, sans-serif;
+        color: white;
+      }
+
+      .glass-box {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(12px);
+        padding: 30px;
+        border-radius: 16px;
+        text-align: center;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+        width: 360px;
+      }
+
+      a {
+        color: #f4c430;
+        font-weight: bold;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="glass-box">
+      <h2>Reset Email Sent</h2>
+      <p>Please check your email for the reset link.</p>
+      <a href="{% url 'accounts:login' %}">Back to Login</a>
+    </div>
+  </body>
+</html>
